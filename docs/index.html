@@ -32,7 +32,9 @@
   .wcard { background: var(--pc, var(--sand)); border: 4px solid var(--ink); border-radius: 20px; padding: 16px 18px 15px; min-height: 178px; display: flex; flex-direction: column; transition: background-color .25s; }
   .whead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .chip { display: inline-block; background: var(--paper); border: 2px solid var(--ink); border-radius: 7px; padding: 2px 8px; font: 900 11px/1.5 var(--sans); letter-spacing: .06em; text-transform: uppercase; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wi { font-size: 20px; line-height: 1; }
+  .wbtn { flex: none; border: 0; border-radius: 8px; background: var(--ink); color: var(--cream); padding: 5px 11px; font: 900 11px/1.4 var(--sans); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: transform .12s; }
+  .wbtn:hover { transform: translate(-1px, -1px); }
+  .wbtn:active { transform: scale(.94); }
   .wtxt { margin: 12px 0 10px; font: 700 19px/1.34 var(--serif); flex: 1; transition: opacity .18s; }
   .wsrc { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); transition: opacity .18s; }
   .demo.swap .wtxt, .demo.swap .wsrc, .demo.swap .chip { opacity: 0; }
@@ -112,15 +114,14 @@
       <div class="widget" aria-live="polite">
         <div class="wshadow">
           <div class="wcard p0" id="demo">
-            <div class="whead"><span class="chip" id="dCat">Ümumi hüquq</span><span class="wi" aria-hidden="true">⚖️</span></div>
+            <div class="whead"><span class="chip" id="dCat">Ümumi hüquq</span><button class="wbtn" id="dNext" type="button">↻ Növbəti</button></div>
             <p class="wtxt" id="dTxt">Fakt yüklənir…</p>
             <p class="wsrc" id="dSrc"></p>
           </div>
         </div>
       </div>
       <div class="demo-actions">
-        <span>Widget belə görünəcək.</span>
-        <button class="nb-btn" id="dNext" type="button" style="min-height:38px;padding:0 14px;font-size:14px">Başqa fakt</button>
+        <span>Widget belə görünəcək. Düyməni sınayın.</span>
       </div>
     </div>
   </section>
@@ -168,7 +169,11 @@
   <div class="faq">
     <details>
       <summary>Yeni fakt nə vaxt görünür?</summary>
-      <p>iOS widget-lərin nə vaxt yenilənəcəyini özü müəyyən edir, ona görə hər açılışda yeni fakt zəmanət verilmir. Adətən bir neçə dəqiqədən bir dəyişir. Widget-ə toxunsanız, növbəti fakt tam ekranda açılır.</p>
+      <p>iOS widget-lərin nə vaxt yenilənəcəyini özü müəyyən edir, ona görə hər açılışda yeni fakt zəmanət verilmir. Adətən bir neçə dəqiqədən bir dəyişir.</p>
+    </details>
+    <details>
+      <summary>“Növbəti” düyməsi necə işləyir?</summary>
+      <p>Düyməyə toxunanda Scriptable bir anlıq açılır və yeni faktı göstərir. Ana ekrana qayıdanda widget həmin faktı göstərir. iOS qaydalarına görə Scriptable widget-i düyməni tətbiqi açmadan işlədə bilmir. Kiçik widget-də bütün widget düymə kimi işləyir. Orta və böyük widget-də düymədən başqa yerə toxunsanız, görünən fakt tam ekranda açılır.</p>
     </details>
     <details>
       <summary>Yalnız bir sahənin faktlarını göstərmək olarmı?</summary>

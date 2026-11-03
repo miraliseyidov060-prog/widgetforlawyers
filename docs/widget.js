@@ -18,6 +18,7 @@
 const BASES = ["__BASE__"];
 const USE_SERIF = true; // fakt mətni üçün Georgia (söndürmək üçün false)
 const REFRESH_MINUTES = 5; // iOS bunu tövsiyə kimi qəbul edir, dəqiq vaxt zəmanət deyil
+const HOLD_SECONDS = 90; // "Növbəti" basandan sonra widget həmin faktı bu qədər saxlayır
 
 // ───────────── Mövzular ─────────────
 const INK = "#171C26";
@@ -157,23 +158,42 @@ function shuffle(a) {
 }
 
 // Qarışdırılmış növbə: bütün faktlar təkrarsız göstərilir, sonra yenidən qarışdırılır.
-function pickFact(facts, version, filterKey) {
+// mode:
+//   "render" — widget yenilənir: yeni fakt götürülür (istifadəçi yeni dəyişibsə həmin fakt saxlanılır)
+//   "peek"   — hazırda widget-də görünən fakt (dəyişmir)
+//   "next"   — istifadəçi "Növbəti" basdı: dərhal yeni fakt, widget onu bir müddət saxlayır
+function pickFact(facts, version, filterKey, mode) {
   const byId = {};
   facts.forEach((f) => (byId[f.id] = f));
   const state = readJSON("huquq-state.json") || {};
   const s = state[filterKey] || {};
-  let queue = s.v === version && Array.isArray(s.queue) ? s.queue.filter((id) => byId[id]) : [];
+  const same = s.v === version;
+  const hasLast = same && s.last && byId[s.last];
+
+  if (mode !== "next" && hasLast) {
+    if (mode === "peek") {
+      // fakt oxunur: geri qayıdanda widget eyni faktı göstərsin
+      state[filterKey] = Object.assign({}, s, { holdUntil: Date.now() + HOLD_SECONDS * 1000 });
+      writeJSON("huquq-state.json", state);
+      return byId[s.last];
+    }
+    if (s.holdUntil && Date.now() < s.holdUntil) return byId[s.last];
+  }
+
+  let queue = same && Array.isArray(s.queue) ? s.queue.filter((id) => byId[id]) : [];
   if (!queue.length) {
     queue = shuffle(facts.map((f) => f.id));
     if (queue.length > 1 && queue[0] === s.last) queue.push(queue.shift());
   }
   const id = queue.shift();
-  state[filterKey] = { v: version, queue: queue, last: id };
+  // istifadəçi dəyişəndə widget-in bir neçə dəfə yenilənməsi faktı dəyişməsin deyə 90 saniyə saxlanılır
+  const holdUntil = mode === "render" ? 0 : Date.now() + HOLD_SECONDS * 1000;
+  state[filterKey] = { v: version, queue: queue, last: id, holdUntil: holdUntil };
   writeJSON("huquq-state.json", state);
   return byId[id];
 }
 
-async function getCurrent() {
+async function getCurrent(mode) {
   const param = parseParam(args.widgetParameter);
   const data = await loadData();
   const settings = data.settings || {};
@@ -184,7 +204,7 @@ async function getCurrent() {
     if (filtered.length) pool = filtered;
   }
   if (!pool.length) pool = FALLBACK;
-  const fact = pickFact(pool, data.version, param.category ? norm(param.category) : "*");
+  const fact = pickFact(pool, data.version, param.category ? norm(param.category) : "*", mode || "render");
   const themeName = param.theme || settings.theme || "kalkhan";
   return {
     fact: fact,
@@ -288,9 +308,13 @@ function buildNb(w, family, cur) {
   head.centerAlignContent();
   chip(head, f.category || cur.title, family === "small" ? 8.5 : 9.5, T);
   head.addSpacer();
-  if (family !== "small") {
-    const ic = head.addText("⚖️");
-    ic.font = Font.systemFont(family === "large" ? 18 : 14);
+  if (family === "small") {
+    // kiçik widget-də ayrıca düymə işləmir: bütün widget "Növbəti" düyməsidir
+    const hint = head.addText("↻");
+    hint.font = Font.heavySystemFont(15);
+    hint.textColor = col(T.ink);
+  } else {
+    nextButton(head, "nb", T);
   }
 
   card.addSpacer(family === "small" ? 6 : family === "large" ? 12 : 8);
@@ -317,8 +341,26 @@ function buildNb(w, family, cur) {
   }
 }
 
+// "↻ Növbəti" düyməsi: toxunanda skript açılır, yeni fakt göstərilir və widget onu saxlayır.
+// (iOS Scriptable widget-lərində düymənin tətbiqi açmadan işləməsinə icazə vermir.)
+function nextButton(parent, kind, T) {
+  const b = parent.addStack();
+  b.centerAlignContent();
+  b.cornerRadius = 7;
+  b.setPadding(3, 8, 3, 8);
+  b.url = nextUrl();
+  if (kind === "nb") {
+    b.backgroundColor = col(T.ink);
+    label(b, "↻ NÖVBƏTİ", 9.5, "heavy", T.bg, { scale: 0.7 });
+  } else {
+    b.backgroundColor = col("#FFFFFF", 0.2);
+    label(b, "↻ Növbəti", 10, "semibold", T.accent, { scale: 0.7 });
+  }
+  return b;
+}
+
 // ───────────── Ana ekran: gradient mövzular ─────────────
-function gradHeader(parent, cur, size, T) {
+function gradHeader(parent, cur, size, T, family) {
   const row = parent.addStack();
   row.centerAlignContent();
   const ic = row.addText("⚖️");
@@ -326,6 +368,13 @@ function gradHeader(parent, cur, size, T) {
   row.addSpacer(5);
   label(row, cur.fact.category || cur.title, size, "semibold", T.accent);
   row.addSpacer();
+  if (family === "small") {
+    const hint = row.addText("↻");
+    hint.font = Font.heavySystemFont(14);
+    hint.textColor = col(T.accent);
+  } else {
+    nextButton(row, "grad", T);
+  }
 }
 
 function withBar(parent, T) {
@@ -355,7 +404,7 @@ function buildGrad(w, family, cur) {
 
   if (family === "small") {
     w.setPadding(13, 13, 11, 13);
-    gradHeader(w, cur, 10.5, T);
+    gradHeader(w, cur, 10.5, T, "small");
     w.addSpacer(7);
     const t = w.addText(f.text);
     t.font = factFont(size, false);
@@ -366,7 +415,7 @@ function buildGrad(w, family, cur) {
     if (f.source) label(w, f.source, 8.5, "medium", T.sub, { scale: 0.7 });
   } else if (family === "large") {
     w.setPadding(18, 18, 14, 18);
-    gradHeader(w, cur, 12, T);
+    gradHeader(w, cur, 12, T, "large");
     w.addSpacer(12);
     const body = withBar(w, T);
     const t = body.addText(f.text);
@@ -390,7 +439,7 @@ function buildGrad(w, family, cur) {
     if (cur.footer) label(row, cur.footer, 9, "regular", T.sub, { scale: 0.6 });
   } else {
     w.setPadding(14, 16, 12, 16);
-    gradHeader(w, cur, 11, T);
+    gradHeader(w, cur, 11, T, "medium");
     w.addSpacer(8);
     const body = withBar(w, T);
     const t = body.addText(f.text);
@@ -407,8 +456,9 @@ function buildGrad(w, family, cur) {
 function buildHome(family, cur) {
   const w = new ListWidget();
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
-  w.url = readUrl();
   const fam = family === "extraLarge" ? "large" : family;
+  // kiçik widget-də yalnız bir toxunuş hədəfi olur: bütün widget "Növbəti" düyməsidir
+  w.url = fam === "small" ? nextUrl() : readUrl();
   if (cur.theme.kind === "nb") buildNb(w, fam, cur);
   else buildGrad(w, fam, cur);
   return w;
@@ -455,17 +505,25 @@ function buildMessage(title, text) {
   return w;
 }
 
-// Widget-ə toxunanda skript tətbiqdə "oxu rejimi"ndə açılır
-function readUrl() {
+// Widget-ə toxunanda skript tətbiqdə açılır: mode=read (görünən faktı oxu), mode=next (yeni fakt)
+function runUrl(mode) {
   const u = URLScheme.forRunningScript();
-  return u + (u.indexOf("?") === -1 ? "?" : "&") + "mode=read";
+  return u + (u.indexOf("?") === -1 ? "?" : "&") + "mode=" + mode;
+}
+function readUrl() {
+  return runUrl("read");
+}
+function nextUrl() {
+  return runUrl("next");
 }
 
 // ───────────── Tətbiq daxilində oxu rejimi ─────────────
-async function readerMode() {
+async function readerMode(firstMode) {
   let more = true;
+  let mode = firstMode || "peek";
   while (more) {
-    const cur = await getCurrent();
+    const cur = await getCurrent(mode);
+    mode = "next";
     const a = new Alert();
     a.title = "⚖️ " + (cur.fact.category || cur.title);
     a.message = cur.fact.text + (cur.fact.source ? "\n\n" + cur.fact.source : "") + (cur.footer ? "\n\n" + cur.footer : "");
@@ -480,7 +538,7 @@ async function readerMode() {
 
 // ───────────── Tətbiq daxilində menyu (skripti Scriptable-də işə salanda) ─────────────
 async function previewWidget(size) {
-  const cur = await getCurrent();
+  const cur = await getCurrent("peek");
   const w = buildHome(size, cur);
   if (size === "small") await w.presentSmall();
   else if (size === "large") await w.presentLarge();
@@ -518,7 +576,7 @@ async function appMenu() {
     if (i === 0) await previewWidget("medium");
     else if (i === 1) await previewWidget("large");
     else if (i === 2) await previewWidget("small");
-    else if (i === 3) await readerMode();
+    else if (i === 3) await readerMode("peek");
     else if (i === 4) await howTo();
     else open = false;
   }
@@ -541,7 +599,8 @@ if (BASES[0].indexOf("__") === 0) {
   Script.setWidget(widget);
 } else {
   const mode = args.queryParameters && args.queryParameters.mode;
-  if (mode === "read") await readerMode();
+  if (mode === "next") await readerMode("next");
+  else if (mode === "read") await readerMode("peek");
   else await appMenu();
 }
 Script.complete();
