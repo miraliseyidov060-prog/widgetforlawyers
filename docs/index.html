@@ -7,6 +7,8 @@
 <title>Hüquq faktı widget-i — iPhone üçün quraşdırma</title>
 <meta name="description" content="Telefonun ekranında təsadüfi hüquqi faktlar göstərən iPhone widget-i. Bir dəfə quraşdırın, faktlar avtomatik yenilənsin.">
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/png" href="logo-mark.png">
+<link rel="apple-touch-icon" href="logo-mark.png">
 <link rel="stylesheet" href="theme.css">
 <style>
   .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -15,13 +17,16 @@
   /* ───── yuxarı zolaq ───── */
   .bar { padding: 22px 0 6px; }
   .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-  .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 20px; letter-spacing: -.01em; }
+  .brand { display: flex; align-items: center; }
+  .brand img { height: 40px; width: auto; display: block; }
   .badge { border: 2px solid var(--ink); border-radius: 8px; background: var(--paper); padding: 3px 9px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; box-shadow: 2px 2px 0 0 var(--ink); }
 
   /* ───── giriş ───── */
   .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 34px; align-items: center; padding: 34px 0 26px; }
   .hero-copy { background: var(--sand); padding: 30px 30px 32px; }
   .hero-copy .nb-tile { margin-bottom: 18px; transform: rotate(-4deg); }
+  .hero-mark { width: 70px; height: 70px; border-radius: 14px; background: var(--paper); }
+  .hero-mark img { height: 48px; width: auto; display: block; }
   h1 { margin: 6px 0 14px; font: 900 clamp(31px, 5vw, 46px)/1.08 var(--sans); letter-spacing: -.025em; }
   .lead { margin: 0; font-size: 17px; font-weight: 500; color: rgba(23, 28, 38, .82); max-width: 40ch; }
 
@@ -36,7 +41,9 @@
   .wbtn:hover { transform: translate(-1px, -1px); }
   .wbtn:active { transform: scale(.94); }
   .wtxt { margin: 12px 0 10px; font: 700 19px/1.34 var(--serif); flex: 1; transition: opacity .18s; }
-  .wsrc { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); transition: opacity .18s; }
+  .wfoot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .wfoot img { height: 18px; width: auto; flex: none; }
+  .wsrc { margin: 0; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 700; color: var(--muted); transition: opacity .18s; }
   .demo.swap .wtxt, .demo.swap .wsrc, .demo.swap .chip { opacity: 0; }
   .demo-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; font-size: 14px; font-weight: 600; color: var(--muted); }
 
@@ -75,6 +82,7 @@
   .faq details p { margin: 0; padding: 0 18px 16px; font-weight: 500; color: rgba(23, 28, 38, .82); }
 
   footer { margin-top: 64px; padding: 26px 0 44px; text-align: center; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(23, 28, 38, .62); }
+  footer .foot-logo { display: block; width: 112px; height: auto; margin: 0 auto 18px; }
   footer a { color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
   @media (max-width: 820px) {
@@ -96,7 +104,7 @@
 
 <header class="bar">
   <div class="wrap">
-    <div class="brand"><span class="nb-tile" style="width:40px;height:40px;border-radius:10px"><svg aria-hidden="true"><use href="#i-scale"/></svg></span>Hüquq faktı</div>
+    <a class="brand" href="./" aria-label="KalkHan"><img src="logo-lockup.png" alt="KalkHan" width="175" height="40"></a>
     <span class="badge">iPhone widget-i</span>
   </div>
 </header>
@@ -104,7 +112,7 @@
 <main class="wrap">
   <section class="hero">
     <div class="hero-copy nb-card">
-      <span class="nb-tile"><svg aria-hidden="true"><use href="#i-scale"/></svg></span>
+      <span class="nb-tile hero-mark"><img src="logo-mark.png" alt="KalkHan loqosu" width="38" height="48"></span>
       <p class="eyebrow">Hər gün bir az hüquq</p>
       <h1>Telefonunda hər dəfə yeni bir hüquqi fakt.</h1>
       <p class="lead">Faktları mərkəz yazır, widget isə onları təsadüfi sırada göstərir. Bir dəfə quraşdırırsınız, yeni faktlar özü gəlir.</p>
@@ -116,7 +124,7 @@
           <div class="wcard p0" id="demo">
             <div class="whead"><span class="chip" id="dCat">Ümumi hüquq</span><button class="wbtn" id="dNext" type="button">↻ Növbəti</button></div>
             <p class="wtxt" id="dTxt">Fakt yüklənir…</p>
-            <p class="wsrc" id="dSrc"></p>
+            <div class="wfoot"><p class="wsrc" id="dSrc"></p><img src="logo-lockup.png" alt="KalkHan" width="79" height="18"></div>
           </div>
         </div>
       </div>
@@ -191,7 +199,7 @@
 </main>
 
 <footer>
-  <div class="wrap">Mərkəz əməkdaşısınız? <a href="admin.html">Admin panelinə keçin</a></div>
+  <div class="wrap"><img class="foot-logo" src="logo.png" alt="KalkHan" width="112" height="111">Mərkəz əməkdaşısınız? <a href="admin.html">Admin panelinə keçin</a></div>
 </footer>
 
 <script>

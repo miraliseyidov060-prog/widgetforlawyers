@@ -19,6 +19,7 @@ Widget faktları əvvəl `raw.githubusercontent.com/İSTİFADƏÇİ/REPO/main/do
 | Fayl | Nə üçündür |
 |---|---|
 | `docs/index.html` | İstifadəçilər üçün quraşdırma səhifəsi və canlı demo |
+| `docs/logo*.png` | KalkHan loqosu: tam (`logo.png`), qalxan (`logo-mark.png`, favicon), üfüqi variant (`logo-lockup.png`). Widget-in içində kiçik variantları ayrıca daxil edilib |
 | `docs/theme.css`, `docs/fonts/` | Ortaq dizayn (Kalkhan üslubu) və yerli şriftlər (Inter, Playfair Display, OFL lisenziyası) |
 | `docs/admin.html` | Mərkəz üçün admin paneli |
 | `docs/widget.js` | iPhone widget skripti (quraşdırma səhifəsi onu kopyalayır) |

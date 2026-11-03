@@ -26,7 +26,7 @@ const PASTELS = ["#F7DFB6", "#B8EACD", "#AFD7F4", "#F9C8D0", "#DBC6F1", "#FAEDA8
 
 const THEMES = {
   // Kalkhan: krem fon, qara çərçivəli pastel kart (rəng kateqoriyaya görə seçilir)
-  kalkhan: { kind: "nb", bg: "#FAF5E5", ink: INK, sub: "#4A5160" },
+  kalkhan: { kind: "nb", bg: "#FAF5E5", ink: INK, sub: "#4A5160", logo: "dark" },
   // Məhkəmə zalı: maqon və qızıl
   court: { bg: ["#1A0C05", "#4A2C0A"], text: "#F5F0E8", sub: "#CDB98C", accent: "#E6C668", line: "#C9A84C", lineAlpha: 0.5 },
   ink: { bg: ["#14213D", "#2340C8"], text: "#FFFFFF", sub: "#C3CCF2", accent: "#FFD27A", line: "#FFFFFF", lineAlpha: 0.22 },
@@ -34,7 +34,7 @@ const THEMES = {
   ocean: { bg: ["#0B3954", "#0891B2"], text: "#FFFFFF", sub: "#CFFAFE", accent: "#FDE68A", line: "#FFFFFF", lineAlpha: 0.22 },
   sunset: { bg: ["#7C2D12", "#DB2777"], text: "#FFFFFF", sub: "#FFE4E6", accent: "#FCD34D", line: "#FFFFFF", lineAlpha: 0.22 },
   forest: { bg: ["#052E16", "#15803D"], text: "#FFFFFF", sub: "#DCFCE7", accent: "#FDE68A", line: "#FFFFFF", lineAlpha: 0.22 },
-  light: { bg: ["#F8FAFC", "#DDE5FF"], text: "#14213D", sub: "#51607A", accent: "#2340C8", line: "#14213D", lineAlpha: 0.18 },
+  light: { bg: ["#F8FAFC", "#DDE5FF"], text: "#14213D", sub: "#51607A", accent: "#2340C8", line: "#14213D", lineAlpha: 0.18, logo: "dark" },
 };
 
 const FALLBACK = [
@@ -42,6 +42,31 @@ const FALLBACK = [
   { id: "f2", text: "Təqsirsizlik prezumpsiyası: şəxs məhkəmənin qanuni qüvvəyə minmiş hökmü olmadan təqsirli sayıla bilməz.", category: "Cinayət hüququ", source: "Ümumi hüquq prinsipi", active: true },
   { id: "f3", text: "Hamı qanun və məhkəmə qarşısında bərabərdir.", category: "Konstitusiya hüququ", source: "Bərabərlik prinsipi", active: true },
 ];
+
+// ───────────── Loqo (KalkHan) ─────────────
+// Kiçik PNG-lər skriptin içindədir, internet lazım deyil.
+// dark = açıq fon üçün (qara yazı), light = tünd fon üçün (krem yazı).
+const LOGO = {
+  lockup: {
+    dark: { d: "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", w: 315, h: 72 },
+    light: { d: "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", w: 315, h: 72 },
+  },
+  mark: {
+    dark: { d: "iVBORw0KGgoAAAANSUhEUgAAADMAAABABAMAAABFOVJ2AAAAJFBMVEX/kk//9e8AAAD/y6r/uY7//fz/hjv/q1z/omb/q3f/fzv/eHjo3DYCAAAADHRSTlP9/QD9/gr+B5pRAwKp1HMdAAAC6UlEQVR42r2VXWjUWBTHf/dmmqYulFwrvig6m6UOCDoD4seL0ELxA0XLguzjhl0YfPEDVCgVZCgoVCgWoaII+iqIIj4IPlkQwYJiFmV9ECRlUYaFmmD9SDtOrg/JTNN0fPXAJdzzz/+cc0/OP1c4JLb9QG1nqWfGO3/bSxyxSKD4j9vGqaNgTUx0HbqTuAwF8O7Sla17TgPfHpzQj46YdUDjOE5x1Om/Ci6AizXllM44jlMUDu+u17ZWaoVykkI8Y3zGO/LGiymOOv0jgKFSA6wpp3SyKO6f3FmqAUZvWmoAMD7jHaJ/JHUNqb6hIbVmINlZU0UmUwRT2a6r1ra21FgyZSerZTIBhVIKkSyVQiJ9ZN6mPJ2w+HkmGPQ6AuVp0W5QzuScUPxmd0DmfI2yXcyqC2aVqmtWAbMKrrJR5g+KsCWLgKqAUCjbUMCg/cNuhAB/dYRsgBgU8LciG1D0uUkuG/NGjha/BxuJGGjaxjJE85xBkCH/9LJ+OasSK49Q6iLoXBsfARuRvCjqMF9jwEYPidmphZiQdGOlLYIEr9AB8pNGNTt84AJIBFTy0ABNkBcquui7OcjT7EAkwxmAsAOl53sDEDYyJpCtCMvCEQNyGIDpLJRshiXlIPg9X8bh4HOIEfkRfPwKwop6WOyOwOiO6k07LHSJvg2+XsZpMrvtbQG5JYx9wvxwvGWuIg0J5Vwq/RHJPaO55r/Ih2wu0JHe9ItcONix882LSLm7M9REOF0LfjrJrUYBlBqxpDE2uZJ0+SwIB0u/zrN6fo2IJUTjK0gLI4BwwPri51ibI4glEI3lxboPwFDAk9XHpzNHPl9/BWgJ0Ji4leFYz/dmpHdqNHOAiw/v0Q6Ifvo4bAec3VWnHRCiMWuphlQc6RVAV+PPyUDp+d5PTiPVX0vLjWs3AVy97k17hFt3CsOzd5SeP3y35UgvDoB/Pxyb4dzDtqT0EovK63r3qkpboHHmv/Fy/8D/1zLS/Q5tKvZxzjql9gAAAABJRU5ErkJggg==", w: 51, h: 64 },
+    light: { d: "iVBORw0KGgoAAAANSUhEUgAAADMAAABABAMAAABFOVJ2AAAAJFBMVEX/kk//9e8AAAD/y6r/uY7//fz/hjv/q1z/omb/q3f/fzv/eHjo3DYCAAAADHRSTlP9/QD9/gr+B5pRAwKp1HMdAAAC6UlEQVR42r2VXWjUWBTHf/dmmqYulFwrvig6m6UOCDoD4seL0ELxA0XLguzjhl0YfPEDVCgVZCgoVCgWoaII+iqIIj4IPlkQwYJiFmV9ECRlUYaFmmD9SDtOrg/JTNN0fPXAJdzzz/+cc0/OP1c4JLb9QG1nqWfGO3/bSxyxSKD4j9vGqaNgTUx0HbqTuAwF8O7Sla17TgPfHpzQj46YdUDjOE5x1Om/Ci6AizXllM44jlMUDu+u17ZWaoVykkI8Y3zGO/LGiymOOv0jgKFSA6wpp3SyKO6f3FmqAUZvWmoAMD7jHaJ/JHUNqb6hIbVmINlZU0UmUwRT2a6r1ra21FgyZSerZTIBhVIKkSyVQiJ9ZN6mPJ2w+HkmGPQ6AuVp0W5QzuScUPxmd0DmfI2yXcyqC2aVqmtWAbMKrrJR5g+KsCWLgKqAUCjbUMCg/cNuhAB/dYRsgBgU8LciG1D0uUkuG/NGjha/BxuJGGjaxjJE85xBkCH/9LJ+OasSK49Q6iLoXBsfARuRvCjqMF9jwEYPidmphZiQdGOlLYIEr9AB8pNGNTt84AJIBFTy0ABNkBcquui7OcjT7EAkwxmAsAOl53sDEDYyJpCtCMvCEQNyGIDpLJRshiXlIPg9X8bh4HOIEfkRfPwKwop6WOyOwOiO6k07LHSJvg2+XsZpMrvtbQG5JYx9wvxwvGWuIg0J5Vwq/RHJPaO55r/Ih2wu0JHe9ItcONix882LSLm7M9REOF0LfjrJrUYBlBqxpDE2uZJ0+SwIB0u/zrN6fo2IJUTjK0gLI4BwwPri51ibI4glEI3lxboPwFDAk9XHpzNHPl9/BWgJ0Ji4leFYz/dmpHdqNHOAiw/v0Q6Ifvo4bAec3VWnHRCiMWuphlQc6RVAV+PPyUDp+d5PTiPVX0vLjWs3AVy97k17hFt3CsOzd5SeP3y35UgvDoB/Pxyb4dzDtqT0EovK63r3qkpboHHmv/Fy/8D/1zLS/Q5tKvZxzjql9gAAAABJRU5ErkJggg==", w: 51, h: 64 },
+  },
+};
+
+function addLogo(parent, kind, T, height) {
+  const a = LOGO[kind][T.logo || "light"];
+  try {
+    const img = parent.addImage(Image.fromData(Data.fromBase64String(a.d)));
+    img.imageSize = new Size(Math.round((height * a.w) / a.h), height);
+    return img;
+  } catch (e) {
+    return null;
+  }
+}
 
 // ───────────── Yaddaş (telefonda, offline üçün) ─────────────
 const fm = FileManager.local();
@@ -325,19 +350,27 @@ function buildNb(w, family, cur) {
   t.minimumScaleFactor = 0.6;
   card.addSpacer();
 
-  if (f.source && (family !== "small" || f.text.length <= 80)) {
-    label(card, "§ " + f.source, family === "small" ? 8.5 : family === "large" ? 11 : 9.5, "bold", T.sub, { lines: family === "large" ? 2 : 1, scale: 0.7 });
-  }
   if (family === "large") {
+    if (f.source) label(card, "§ " + f.source, 11, "bold", T.sub, { lines: 2, scale: 0.7 });
     card.addSpacer(8);
     const rule = card.addStack();
     rule.size = new Size(0, 2);
     rule.backgroundColor = col(T.ink);
     card.addSpacer(8);
     const row = card.addStack();
-    label(row, upper(cur.title), 9, "heavy", T.ink);
+    row.centerAlignContent();
+    addLogo(row, "lockup", T, 20);
     row.addSpacer();
     if (cur.footer) label(row, cur.footer, 8.5, "medium", T.sub, { scale: 0.6 });
+  } else {
+    const foot = card.addStack();
+    foot.centerAlignContent();
+    if (f.source && (family !== "small" || f.text.length <= 80)) {
+      label(foot, "§ " + f.source, family === "small" ? 8.5 : 9.5, "bold", T.sub, { scale: 0.7 });
+    }
+    foot.addSpacer();
+    if (family === "small") addLogo(foot, "mark", T, 15);
+    else addLogo(foot, "lockup", T, 16);
   }
 }
 
@@ -412,7 +445,11 @@ function buildGrad(w, family, cur) {
     t.lineLimit = 9;
     t.minimumScaleFactor = 0.55;
     w.addSpacer();
-    if (f.source) label(w, f.source, 8.5, "medium", T.sub, { scale: 0.7 });
+    const foot = w.addStack();
+    foot.centerAlignContent();
+    if (f.source) label(foot, f.source, 8.5, "medium", T.sub, { scale: 0.7 });
+    foot.addSpacer();
+    addLogo(foot, "mark", T, 15);
   } else if (family === "large") {
     w.setPadding(18, 18, 14, 18);
     gradHeader(w, cur, 12, T, "large");
@@ -434,7 +471,8 @@ function buildGrad(w, family, cur) {
     rule.backgroundColor = col(T.line, T.lineAlpha);
     w.addSpacer(8);
     const row = w.addStack();
-    label(row, cur.title, 10, "semibold", T.accent);
+    row.centerAlignContent();
+    addLogo(row, "lockup", T, 20);
     row.addSpacer();
     if (cur.footer) label(row, cur.footer, 9, "regular", T.sub, { scale: 0.6 });
   } else {
@@ -449,7 +487,11 @@ function buildGrad(w, family, cur) {
     t.minimumScaleFactor = 0.6;
     body.addSpacer();
     w.addSpacer();
-    if (f.source) label(w, f.source, 9.5, "medium", T.sub, { scale: 0.7 });
+    const foot = w.addStack();
+    foot.centerAlignContent();
+    if (f.source) label(foot, f.source, 9.5, "medium", T.sub, { scale: 0.7 });
+    foot.addSpacer();
+    addLogo(foot, "lockup", T, 16);
   }
 }
 
