@@ -232,7 +232,7 @@ function buildHome(family, cur) {
   g.endPoint = new Point(1, 1);
   w.backgroundGradient = g;
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
-  w.url = URLScheme.forRunningScript();
+  w.url = readUrl();
 
   const size = bodySize(family, f.text.length);
 
@@ -294,7 +294,7 @@ function buildLock(family, cur) {
   const f = cur.fact;
   const w = new ListWidget();
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
-  w.url = URLScheme.forRunningScript();
+  w.url = readUrl();
 
   if (family === "accessoryInline") {
     w.addText("⚖️ " + f.text);
@@ -331,6 +331,12 @@ function buildMessage(title, text) {
   return w;
 }
 
+// Widget-ə toxunanda skript tətbiqdə "oxu rejimi"ndə açılır
+function readUrl() {
+  const u = URLScheme.forRunningScript();
+  return u + (u.indexOf("?") === -1 ? "?" : "&") + "mode=read";
+}
+
 // ───────────── Tətbiq daxilində oxu rejimi ─────────────
 async function readerMode() {
   let more = true;
@@ -345,6 +351,52 @@ async function readerMode() {
     const i = await a.presentAlert();
     if (i === 1) Pasteboard.copyString(cur.fact.text + (cur.fact.source ? " — " + cur.fact.source : ""));
     more = i === 0 || i === 1;
+  }
+}
+
+// ───────────── Tətbiq daxilində menyu (skripti Scriptable-də işə salanda) ─────────────
+async function previewWidget(size) {
+  const cur = await getCurrent();
+  const w = buildHome(size, cur);
+  if (size === "small") await w.presentSmall();
+  else if (size === "large") await w.presentLarge();
+  else await w.presentMedium();
+}
+
+async function howTo() {
+  const a = new Alert();
+  a.title = "Widget-i ana ekrana qoyun";
+  a.message =
+    "Skripti Scriptable-də işə salmaq widget yaratmır. Widget ana ekrana ayrıca əlavə olunur:\n\n" +
+    "1. Ana ekranda boş yerə uzun basın.\n" +
+    "2. Sol üstdəki + işarəsinə basın.\n" +
+    "3. Axtarışa “Scriptable” yazın və seçin.\n" +
+    "4. Ölçünü seçin (orta ölçü Fitness widget-i kimidir) və “Add Widget” basın.\n" +
+    "5. Ekrandakı boş widget-ə toxunun. Script sahəsində “" + Script.name() + "” seçin.\n\n" +
+    "Kilid ekranı üçün: kilid ekranına uzun basın, Customize, sonra widget sahəsinə toxunub Scriptable seçin.";
+  a.addCancelAction("Aydındır");
+  await a.presentAlert();
+}
+
+async function appMenu() {
+  let open = true;
+  while (open) {
+    const a = new Alert();
+    a.title = "⚖️ Hüquq faktı";
+    a.message = "Bu, tətbiqin içindəki menyudur. Widget-i ana ekrana əlavə etmək üçün “Ana ekrana necə qoymalı” seçin.";
+    a.addAction("Widget ön baxışı: orta");
+    a.addAction("Widget ön baxışı: böyük");
+    a.addAction("Widget ön baxışı: kiçik");
+    a.addAction("Fakt oxu");
+    a.addAction("Ana ekrana necə qoymalı");
+    a.addCancelAction("Bağla");
+    const i = await a.presentSheet();
+    if (i === 0) await previewWidget("medium");
+    else if (i === 1) await previewWidget("large");
+    else if (i === 2) await previewWidget("small");
+    else if (i === 3) await readerMode();
+    else if (i === 4) await howTo();
+    else open = false;
   }
 }
 
@@ -364,6 +416,8 @@ if (BASE.indexOf("__") === 0) {
   }
   Script.setWidget(widget);
 } else {
-  await readerMode();
+  const mode = args.queryParameters && args.queryParameters.mode;
+  if (mode === "read") await readerMode();
+  else await appMenu();
 }
 Script.complete();
