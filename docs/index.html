@@ -3,120 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F2F4F6">
+<meta name="theme-color" content="#FAF5E5">
 <title>Hüquq faktı widget-i — iPhone üçün quraşdırma</title>
 <meta name="description" content="Telefonun ekranında təsadüfi hüquqi faktlar göstərən iPhone widget-i. Bir dəfə quraşdırın, faktlar avtomatik yenilənsin.">
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="theme.css">
 <style>
-  :root {
-    --paper: #F2F4F6;
-    --sheet: #FFFFFF;
-    --ink: #1B2A4A;
-    --muted: #5E6B80;
-    --rule: #CBD3DC;
-    --stamp: #2340C8;
-    --stamp-deep: #14213D;
-    --stamp-wash: #E8ECFB;
-    --ok: #1F7A4D;
-    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, "Times New Roman", serif;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 var(--sans); padding-bottom: env(safe-area-inset-bottom); }
-  [hidden] { display: none !important; }
-  :focus-visible { outline: 3px solid color-mix(in srgb, var(--stamp) 55%, white); outline-offset: 3px; }
   .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 0 22px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
 
-  header.bar { padding: 18px 0 0; }
-  header.bar .wrap { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-  header.bar svg { width: 34px; height: 34px; color: var(--stamp); }
+  /* ───── yuxarı zolaq ───── */
+  .bar { padding: 22px 0 6px; }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 20px; letter-spacing: -.01em; }
+  .badge { border: 2px solid var(--ink); border-radius: 8px; background: var(--paper); padding: 3px 9px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; box-shadow: 2px 2px 0 0 var(--ink); }
 
   /* ───── giriş ───── */
-  .hero { padding: 34px 0 10px; }
-  h1 { font: 600 clamp(30px, 7.4vw, 46px)/1.12 var(--serif); letter-spacing: -.01em; margin: 0 0 14px; max-width: 16ch; }
-  .lead { margin: 0 0 28px; color: var(--muted); max-width: 46ch; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 34px; align-items: center; padding: 34px 0 26px; }
+  .hero-copy { background: var(--sand); padding: 30px 30px 32px; }
+  .hero-copy .nb-tile { margin-bottom: 18px; transform: rotate(-4deg); }
+  h1 { margin: 6px 0 14px; font: 900 clamp(31px, 5vw, 46px)/1.08 var(--sans); letter-spacing: -.025em; }
+  .lead { margin: 0; font-size: 17px; font-weight: 500; color: rgba(23, 28, 38, .82); max-width: 40ch; }
 
-  /* canlı demo widget */
-  .demo-wrap { position: relative; margin: 0 0 6px; }
-  .widget { position: relative; overflow: hidden; border-radius: 26px; padding: 15px 17px 13px; min-height: 172px; display: flex; flex-direction: column; background: linear-gradient(135deg, #14213D, #2340C8); color: #fff; box-shadow: 0 18px 40px -12px rgba(20,33,61,.55), inset 0 0 0 1px rgba(255,255,255,.1); transition: transform .25s; }
-  .widget .stamp { position: absolute; right: -34px; bottom: -40px; width: 170px; height: 170px; color: #fff; opacity: .09; transform: rotate(-16deg); pointer-events: none; }
-  .widget .cat { font-size: 12.5px; font-weight: 600; color: #FFD27A; display: flex; gap: 6px; align-items: center; }
-  .widget .body { display: flex; gap: 11px; margin: 10px 0 10px; flex: 1; }
-  .widget .bar { width: 3px; border-radius: 2px; background: #FFD27A; flex: none; }
-  .widget .txt { margin: 0; font-family: var(--serif); line-height: 1.38; }
-  .widget .src { font-size: 11px; font-weight: 500; color: #C3CCF2; margin: 0; }
-  .widget.swap .txt, .widget.swap .cat span, .widget.swap .src { opacity: 0; }
-  .widget .txt, .widget .cat span, .widget .src { transition: opacity .18s; }
-  .demo-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 14px; color: var(--muted); }
-  .link-btn { border: 0; background: none; color: var(--stamp); font: inherit; font-weight: 600; cursor: pointer; padding: 6px 0; text-decoration: underline; text-underline-offset: 3px; }
+  /* canlı demo: widget kimi görünən kart */
+  .demo { justify-self: center; width: 100%; max-width: 420px; }
+  .widget { background: var(--cream); border: 2px solid rgba(23, 28, 38, .12); border-radius: 32px; padding: 14px; box-shadow: 0 14px 30px -14px rgba(23, 28, 38, .35); }
+  .wshadow { background: var(--ink); border-radius: 22px; padding: 0 7px 7px 0; }
+  .wcard { background: var(--pc, var(--sand)); border: 4px solid var(--ink); border-radius: 20px; padding: 16px 18px 15px; min-height: 178px; display: flex; flex-direction: column; transition: background-color .25s; }
+  .whead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .chip { display: inline-block; background: var(--paper); border: 2px solid var(--ink); border-radius: 7px; padding: 2px 8px; font: 900 11px/1.5 var(--sans); letter-spacing: .06em; text-transform: uppercase; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wi { font-size: 20px; line-height: 1; }
+  .wtxt { margin: 12px 0 10px; font: 700 19px/1.34 var(--serif); flex: 1; transition: opacity .18s; }
+  .wsrc { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); transition: opacity .18s; }
+  .demo.swap .wtxt, .demo.swap .wsrc, .demo.swap .chip { opacity: 0; }
+  .demo-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; font-size: 14px; font-weight: 600; color: var(--muted); }
 
-  /* ───── addımlar ───── */
-  h2 { font: 600 clamp(24px, 5.6vw, 30px)/1.2 var(--serif); margin: 52px 0 6px; }
-  .sub { color: var(--muted); margin: 0 0 22px; }
-  ol.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 0; }
-  ol.steps > li { counter-increment: s; position: relative; padding: 0 0 30px 58px; }
-  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--stamp); color: var(--stamp); font: 700 19px/34px var(--serif); text-align: center; background: var(--paper); }
-  ol.steps > li::after { content: ""; position: absolute; left: 18px; top: 44px; bottom: 6px; width: 2px; background: var(--rule); }
-  ol.steps > li:last-child { padding-bottom: 0; }
-  ol.steps > li:last-child::after { display: none; }
-  ol.steps h3 { font: 600 19px/1.3 var(--sans); margin: 5px 0 6px; }
-  ol.steps p { margin: 0 0 12px; color: var(--muted); font-size: 16px; }
-  ol.steps p b { color: var(--ink); }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 12px; border: 1.5px solid var(--stamp); background: var(--sheet); color: var(--stamp); font: 600 16px var(--sans); cursor: pointer; text-decoration: none; transition: background .15s; }
-  .btn:hover { background: var(--stamp-wash); }
-  .btn.primary { background: var(--stamp); color: #fff; }
-  .btn.primary:hover { background: #1A33A8; }
-  .btn.done { background: var(--ok); border-color: var(--ok); color: #fff; }
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-  .note { font-size: 14.5px; color: var(--muted); }
-  details { margin-top: 10px; font-size: 14.5px; color: var(--muted); }
-  details summary { cursor: pointer; font-weight: 600; color: var(--ink); }
-  details textarea { width: 100%; margin-top: 10px; height: 140px; border: 1px solid var(--rule); border-radius: 10px; padding: 10px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; background: var(--sheet); color: var(--ink); }
-  code { font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--stamp-wash); padding: 1px 6px; border-radius: 5px; color: var(--stamp-deep); }
+  /* ───── bölmələr ───── */
+  h2 { margin: 52px 0 6px; font: 900 clamp(26px, 4.4vw, 34px)/1.12 var(--sans); letter-spacing: -.02em; }
+  .sub { margin: 0 0 24px; font-weight: 500; color: var(--muted); }
 
-  .faq { display: grid; gap: 0; border-top: 1px solid var(--rule); margin-top: 8px; }
-  .faq > div { padding: 18px 0; border-bottom: 1px solid var(--rule); }
-  .faq h3 { font: 600 17px/1.35 var(--sans); margin: 0 0 6px; }
-  .faq p { margin: 0; color: var(--muted); font-size: 16px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; counter-reset: s; }
+  .step { counter-increment: s; padding: 22px 22px 24px; }
+  .step:nth-child(1) { background: var(--sky); }
+  .step:nth-child(2) { background: var(--mint); }
+  .step:nth-child(3) { background: var(--rose); }
+  .step:nth-child(4) { background: var(--lilac); }
+  .step .num { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 14px; border: 3px solid var(--ink); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow-sm); font: 900 22px/1 var(--sans); }
+  .step .num::before { content: counter(s); }
+  .step h3 { margin: 0 0 8px; font: 900 21px/1.2 var(--sans); letter-spacing: -.01em; }
+  .step p { margin: 0 0 12px; font-size: 15.5px; font-weight: 500; color: rgba(23, 28, 38, .85); }
+  .step p b { font-weight: 800; color: var(--ink); }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 8px; }
+  .note { font-size: 14px; font-weight: 600; color: rgba(23, 28, 38, .72); }
+  .callout { margin: 24px 0 0; background: var(--lemon); border: 3px solid var(--ink); border-radius: 14px; padding: 14px 18px; font-weight: 600; box-shadow: var(--shadow-sm); }
+  .callout b { font-weight: 900; }
 
-  footer { margin-top: 60px; padding: 26px 0 40px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
-  footer a { color: var(--stamp); font-weight: 600; }
+  details.more { margin-top: 12px; font-size: 14.5px; font-weight: 600; }
+  details.more summary { cursor: pointer; font-weight: 800; }
+  details.more textarea { width: 100%; margin-top: 10px; height: 120px; border: 3px solid var(--ink); border-radius: 10px; padding: 10px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; background: var(--paper); color: var(--ink); }
+  details.more a { color: var(--ink); font-weight: 800; }
+  code { font: 700 13.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--paper); border: 2px solid var(--ink); padding: 0 5px; border-radius: 6px; }
 
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+  .faq { display: grid; gap: 16px; }
+  .faq details { padding: 0; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--shadow-sm); }
+  .faq summary { cursor: pointer; padding: 15px 18px; font: 800 17px/1.35 var(--sans); list-style: none; display: flex; justify-content: space-between; gap: 14px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-weight: 900; font-size: 22px; line-height: 1; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq details p { margin: 0; padding: 0 18px 16px; font-weight: 500; color: rgba(23, 28, 38, .82); }
+
+  footer { margin-top: 64px; padding: 26px 0 44px; text-align: center; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(23, 28, 38, .62); }
+  footer a { color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 20px; }
+    .steps { grid-template-columns: 1fr; }
+    .hero-copy { padding: 24px 22px 26px; }
+  }
 </style>
 </head>
 <body>
 
 <svg class="sprite" aria-hidden="true" focusable="false">
   <defs>
-    <symbol id="seal" viewBox="0 0 200 200">
-      <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="5"/>
-      <circle cx="100" cy="100" r="58" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path id="sealPath" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0" fill="none"/>
-      <text font-family="Georgia, serif" font-size="17" font-weight="700" letter-spacing="3.2" fill="currentColor"><textPath href="#sealPath">HÜQUQ FAKTLARI · MƏRKƏZ · HÜQUQ FAKTLARI · MƏRKƏZ ·</textPath></text>
-      <text x="100" y="128" text-anchor="middle" font-family="Georgia, serif" font-size="82" font-weight="700" fill="currentColor">§</text>
+    <symbol id="i-scale" viewBox="0 0 24 24">
+      <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
     </symbol>
   </defs>
 </svg>
 
-<header class="bar"><div class="wrap"><svg aria-hidden="true"><use href="#seal"/></svg><span>Hüquq faktı</span></div></header>
+<header class="bar">
+  <div class="wrap">
+    <div class="brand"><span class="nb-tile" style="width:40px;height:40px;border-radius:10px"><svg aria-hidden="true"><use href="#i-scale"/></svg></span>Hüquq faktı</div>
+    <span class="badge">iPhone widget-i</span>
+  </div>
+</header>
 
 <main class="wrap">
   <section class="hero">
-    <h1>Telefonun ekranında hər dəfə yeni bir hüquqi fakt.</h1>
-    <p class="lead">Faktları mərkəz yazır, widget isə onları təsadüfi sırada göstərir. Bir dəfə quraşdırırsınız, yeni faktlar özü gəlir.</p>
+    <div class="hero-copy nb-card">
+      <span class="nb-tile"><svg aria-hidden="true"><use href="#i-scale"/></svg></span>
+      <p class="eyebrow">Hər gün bir az hüquq</p>
+      <h1>Telefonunda hər dəfə yeni bir hüquqi fakt.</h1>
+      <p class="lead">Faktları mərkəz yazır, widget isə onları təsadüfi sırada göstərir. Bir dəfə quraşdırırsınız, yeni faktlar özü gəlir.</p>
+    </div>
 
-    <div class="demo-wrap">
-      <div class="widget" id="demo" aria-live="polite">
-        <svg class="stamp" aria-hidden="true"><use href="#seal"/></svg>
-        <div class="cat"><span aria-hidden="true">⚖️</span><span id="dCat">Ümumi hüquq</span></div>
-        <div class="body"><div class="bar"></div><p class="txt" id="dTxt">Fakt yüklənir…</p></div>
-        <p class="src" id="dSrc"></p>
+    <div class="demo" id="demoBox">
+      <div class="widget" aria-live="polite">
+        <div class="wshadow">
+          <div class="wcard p0" id="demo">
+            <div class="whead"><span class="chip" id="dCat">Ümumi hüquq</span><span class="wi" aria-hidden="true">⚖️</span></div>
+            <p class="wtxt" id="dTxt">Fakt yüklənir…</p>
+            <p class="wsrc" id="dSrc"></p>
+          </div>
+        </div>
       </div>
       <div class="demo-actions">
         <span>Widget belə görünəcək.</span>
-        <button class="link-btn" id="dNext" type="button">Başqa fakt göstər</button>
+        <button class="nb-btn" id="dNext" type="button" style="min-height:38px;padding:0 14px;font-size:14px">Başqa fakt</button>
       </div>
     </div>
   </section>
@@ -125,71 +129,84 @@
   <p class="sub">Bir telefon üçün təxminən bir dəqiqə çəkir.</p>
 
   <ol class="steps">
-    <li>
+    <li class="step nb-card">
+      <span class="num" aria-hidden="true"></span>
       <h3>Scriptable tətbiqini yükləyin</h3>
       <p>Widget-i bu pulsuz tətbiq göstərir. Artıq yüklənibsə, növbəti addıma keçin.</p>
-      <div class="btn-row"><a class="btn" href="https://apps.apple.com/app/scriptable/id1405459188" rel="noopener">App Store-da aç</a></div>
+      <div class="btn-row"><a class="nb-btn" href="https://apps.apple.com/app/scriptable/id1405459188" rel="noopener">App Store-da aç</a></div>
     </li>
-    <li>
+    <li class="step nb-card">
+      <span class="num" aria-hidden="true"></span>
       <h3>Widget kodunu kopyalayın</h3>
       <p>Düyməyə basın. Kod telefonun buferinə köçürülür.</p>
-      <div class="btn-row"><button class="btn primary" id="copyBtn" type="button" disabled>Kodu kopyala</button></div>
+      <div class="btn-row"><button class="nb-btn" id="copyBtn" type="button" disabled>Kodu kopyala</button></div>
       <p class="note" id="copyNote" role="status"></p>
-      <details>
+      <details class="more" id="fallback">
         <summary>Düymə işləmirsə</summary>
         <textarea id="codeBox" readonly aria-label="Widget kodu"></textarea>
-        <p class="note">Mətnin içinə toxunun, hamısını seçin və kopyalayın. Ya da <a id="dlLink" href="#" download="Hüquq faktı.js">skripti fayl kimi endirin</a> və Paylaş menyusundan Scriptable-ə göndərin.</p>
+        <p class="note">Mətni seçib kopyalayın. Ya da <a id="dlLink" href="#" download="Huquq fakti.js">skripti fayl kimi endirin</a> və Paylaş menyusundan Scriptable-ə göndərin.</p>
       </details>
     </li>
-    <li>
+    <li class="step nb-card">
+      <span class="num" aria-hidden="true"></span>
       <h3>Scriptable-də yapışdırın</h3>
       <p>Scriptable-i açın, yeni skript yaradın, boş sahəyə uzun basıb <b>Yapışdır</b> seçin. Skripti “Hüquq faktı” adlandırıb <b>Done</b> basın.</p>
-      <div class="btn-row"><a class="btn" href="scriptable:///add">Scriptable-i aç</a></div>
+      <div class="btn-row"><a class="nb-btn" href="scriptable:///add">Scriptable-i aç</a></div>
       <p class="note">Düymə yeni skript açmasa, Scriptable-də sağ üstdəki <b>+</b> işarəsinə basın.</p>
     </li>
-    <li>
+    <li class="step nb-card">
+      <span class="num" aria-hidden="true"></span>
       <h3>Widget-i ana ekrana qoyun</h3>
-      <p>Skripti Scriptable-də işə salmaq widget yaratmır, yalnız menyu açır. Widget ana ekrana ayrıca əlavə olunur:</p>
       <p><b>Ana ekran:</b> boş yerə uzun basın, sol üstdəki <b>+</b> işarəsinə basın, <b>Scriptable</b> axtarıb ölçünü seçin (orta ölçü Fitness widget-i boyda olur) və <b>Add Widget</b> edin. Sonra ekrandakı boş widget-ə toxunun və <b>Script</b> sahəsində “Hüquq faktı”nı seçin.</p>
       <p><b>Kilid ekranı:</b> kilid ekranına uzun basın, <b>Customize</b> deyin, saatın altındakı sahəyə toxunub <b>Scriptable</b> widget-ini əlavə edin.</p>
     </li>
   </ol>
 
+  <p class="callout"><b>Ən çox edilən səhv:</b> skripti Scriptable-in içində işə salmaq widget yaratmır, yalnız menyu açır. Widget ana ekrana yuxarıdakı 4-cü addımla əlavə olunur.</p>
+
   <h2>Qısa suallar</h2>
   <div class="faq">
-    <div>
-      <h3>Yeni fakt nə vaxt görünür?</h3>
+    <details>
+      <summary>Yeni fakt nə vaxt görünür?</summary>
       <p>iOS widget-lərin nə vaxt yenilənəcəyini özü müəyyən edir, ona görə hər açılışda yeni fakt zəmanət verilmir. Adətən bir neçə dəqiqədən bir dəyişir. Widget-ə toxunsanız, növbəti fakt tam ekranda açılır.</p>
-    </div>
-    <div>
-      <h3>Yalnız bir sahənin faktlarını göstərmək olarmı?</h3>
-      <p>Widget-ə uzun basın, <b>Edit Widget</b> deyin və <b>Parameter</b> sahəsinə kateqoriyanı yazın, məsələn <code>Əmək hüququ</code>. Rəngi də dəyişmək üçün: <code>kateqoriya=Əmək hüququ;movzu=ocean</code>.</p>
-    </div>
-    <div>
-      <h3>İnternet olmayanda nə olur?</h3>
+    </details>
+    <details>
+      <summary>Yalnız bir sahənin faktlarını göstərmək olarmı?</summary>
+      <p>Widget-ə uzun basın, <b>Edit Widget</b> deyin və <b>Parameter</b> sahəsinə kateqoriyanı yazın, məsələn <code>Əmək hüququ</code>. Rəngi də seçmək üçün: <code>kateqoriya=Əmək hüququ;movzu=court</code>.</p>
+    </details>
+    <details>
+      <summary>İnternet olmayanda nə olur?</summary>
       <p>Widget son yüklənmiş faktları telefonda saxlayır və internet olmadan da işləyir.</p>
-    </div>
-    <div>
-      <h3>Faktlar hüquqi məsləhətdirmi?</h3>
+    </details>
+    <details>
+      <summary>Faktlar hüquqi məsləhətdirmi?</summary>
       <p>Xeyr. Faktlar ümumi məlumat üçündür. Konkret vəziyyətiniz üçün vəkilə müraciət edin.</p>
-    </div>
+    </details>
   </div>
 </main>
 
 <footer>
-  <div class="wrap">Mərkəz əməkdaşısınız? <a href="admin.html">Admin panelinə keçin</a>.</div>
+  <div class="wrap">Mərkəz əməkdaşısınız? <a href="admin.html">Admin panelinə keçin</a></div>
 </footer>
 
 <script>
 (() => {
   'use strict';
   const $ = (s) => document.querySelector(s);
-  const BASE = new URL('./', location.href).href;
+  const pageBase = new URL('./', location.href).href;
   const FALLBACK = [{ text: 'Qanunu bilməmək məsuliyyətdən azad etmir.', category: 'Ümumi hüquq', source: 'Ümumi hüquq prinsipi' }];
+
+  // kateqoriyadan pastel rəng: widget.js ilə eyni qayda
+  const pastel = (category) => {
+    const t = String(category || '').trim();
+    let h = 0;
+    for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+    return 'p' + (h % 6);
+  };
 
   // ───── canlı demo ─────
   let facts = FALLBACK, bag = [], last = null;
-  const size = (n) => (n <= 90 ? 20 : n <= 150 ? 18 : n <= 230 ? 16 : 14.5);
+  const size = (n) => (n <= 70 ? 23 : n <= 110 ? 20 : n <= 160 ? 18 : n <= 230 ? 16 : 14.5);
   function next(animate) {
     if (!bag.length) {
       bag = facts.map((_, i) => i).sort(() => Math.random() - 0.5);
@@ -197,16 +214,17 @@
     }
     last = bag.shift();
     const f = facts[last];
-    const w = $('#demo');
+    const box = $('#demoBox');
     const apply = () => {
+      $('#demo').className = 'wcard ' + pastel(f.category);
       $('#dCat').textContent = f.category || 'Hüquqi fakt';
       const t = $('#dTxt');
       t.textContent = f.text;
       t.style.fontSize = size(f.text.length) + 'px';
-      $('#dSrc').textContent = f.source || '';
-      w.classList.remove('swap');
+      $('#dSrc').textContent = f.source ? '§ ' + f.source : '';
+      box.classList.remove('swap');
     };
-    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) { w.classList.add('swap'); setTimeout(apply, 180); }
+    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) { box.classList.add('swap'); setTimeout(apply, 180); }
     else apply();
   }
   fetch('facts.json?t=' + Date.now()).then((r) => r.json()).then((d) => {
@@ -215,11 +233,19 @@
   }).catch(() => {}).finally(() => next(false));
   $('#dNext').addEventListener('click', () => next(true));
 
-  // ───── kod hazırlığı ─────
+  // ───── kod hazırlığı: data ünvanları avtomatik doldurulur ─────
+  // GitHub Pages-dəsə əvvəl raw.githubusercontent.com (Pages olmadan da işləyir), sonra Pages.
+  const bases = [pageBase];
+  const gh = location.hostname.match(/^(.+)\.github\.io$/);
+  if (gh) {
+    const repo = location.pathname.split('/').filter(Boolean)[0];
+    if (repo && !/\.html?$/.test(repo)) bases.unshift(`https://raw.githubusercontent.com/${gh[1]}/${repo}/main/docs/`);
+  }
+
   let code = '';
   const btn = $('#copyBtn'), note = $('#copyNote'), box = $('#codeBox'), dl = $('#dlLink');
   fetch('widget.js?t=' + Date.now()).then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); }).then((txt) => {
-    code = txt.replace('"__BASE__"', JSON.stringify(BASE));
+    code = txt.replace('"__BASE__"', bases.map((b) => JSON.stringify(b)).join(', '));
     box.value = code;
     dl.href = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
     btn.disabled = false;
@@ -232,12 +258,12 @@
       try { box.removeAttribute('readonly'); box.select(); box.setSelectionRange(0, code.length); ok = document.execCommand('copy'); box.setAttribute('readonly', ''); } catch (e2) {}
     }
     if (ok) {
-      btn.textContent = 'Kopyalandı'; btn.classList.add('done');
+      btn.textContent = 'Kopyalandı'; btn.classList.add('done', 'mint');
       note.textContent = 'İndi növbəti addıma keçin və Scriptable-də yapışdırın.';
-      setTimeout(() => { btn.textContent = 'Kodu yenidən kopyala'; btn.classList.remove('done'); }, 4000);
+      setTimeout(() => { btn.textContent = 'Kodu yenidən kopyala'; btn.classList.remove('mint'); }, 4000);
     } else {
       note.textContent = 'Avtomatik kopyalama alınmadı. “Düymə işləmirsə” bölməsindəki mətni əl ilə kopyalayın.';
-      document.querySelector('details').open = true;
+      $('#fallback').open = true;
     }
   });
 })();

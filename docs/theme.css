@@ -1,0 +1,96 @@
+/* ═══════════════════════════════════════════════════════════
+   Hüquq faktı — Kalkhan üslubu (neubrutalizm)
+   Krem fon, qalın tuş çərçivə, sərt kölgə, pastel kartlar.
+   Şriftlər: Inter (interfeys), Playfair Display (hüquqi mətn).
+   ═══════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url("fonts/inter-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url("fonts/inter-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Playfair Display"; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url("fonts/playfair-display-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Playfair Display"; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url("fonts/playfair-display-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --cream: #FAF5E5;
+  --ink: #171C26;
+  --paper: #FFFFFF;
+  --muted: #4A5160;
+  --sand: #F7DFB6;
+  --mint: #B8EACD;
+  --sky: #AFD7F4;
+  --rose: #F9C8D0;
+  --lilac: #DBC6F1;
+  --lemon: #FAEDA8;
+  --success: #39AC69;
+  --danger: #E23636;
+  --gold: #C9A84C;
+  --mahogany: #2C1A0E;
+
+  --radius: 16px;
+  --shadow-sm: 3px 3px 0 0 var(--ink);
+  --shadow: 6px 6px 0 0 var(--ink);
+  --shadow-lg: 8px 8px 0 0 var(--ink);
+
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background-color: var(--cream);
+  background-image: radial-gradient(rgba(23, 28, 38, .06) 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: var(--ink);
+  font: 16px/1.5 var(--sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+::selection { background: var(--lemon); }
+
+/* pastel rəng sinifləri: kateqoriya adından hesablanır (widget ilə eyni qayda) */
+.p0 { --pc: var(--sand); }
+.p1 { --pc: var(--mint); }
+.p2 { --pc: var(--sky); }
+.p3 { --pc: var(--rose); }
+.p4 { --pc: var(--lilac); }
+.p5 { --pc: var(--lemon); }
+
+.nb-card { border: 4px solid var(--ink); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
+.nb-tile { display: grid; place-items: center; flex: none; border: 3px solid var(--ink); border-radius: 12px; background: var(--lemon); box-shadow: var(--shadow-sm); width: 48px; height: 48px; }
+.nb-tile svg { width: 26px; height: 26px; stroke: var(--ink); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.eyebrow { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: rgba(23, 28, 38, .7); }
+
+.nb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px;
+  border: 3px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink);
+  font: 800 15px/1 var(--sans); cursor: pointer; text-decoration: none; box-shadow: 4px 4px 0 0 var(--ink);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.nb-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink); }
+.nb-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--ink); }
+.nb-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: 2px 2px 0 0 var(--ink); }
+.nb-btn.primary { background: var(--lemon); }
+.nb-btn.mint { background: var(--mint); }
+.nb-btn.rose { background: var(--rose); }
+.nb-btn.ink { background: var(--ink); color: var(--cream); }
+.nb-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }

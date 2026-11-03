@@ -12,11 +12,14 @@ docs/facts.json + docs/meta.json   ← GitHub Pages bunları yayımlayır
 iPhone widget-i (Scriptable)
 ```
 
+Widget faktları əvvəl `raw.githubusercontent.com/İSTİFADƏÇİ/REPO/main/docs/` ünvanından oxuyur (Pages açılmasa da işləyir), alınmasa GitHub Pages ünvanına keçir. Pages yalnız `index.html` və `admin.html` səhifələrinin yayımı üçün lazımdır.
+
 ## Fayllar
 
 | Fayl | Nə üçündür |
 |---|---|
 | `docs/index.html` | İstifadəçilər üçün quraşdırma səhifəsi və canlı demo |
+| `docs/theme.css`, `docs/fonts/` | Ortaq dizayn (Kalkhan üslubu) və yerli şriftlər (Inter, Playfair Display, OFL lisenziyası) |
 | `docs/admin.html` | Mərkəz üçün admin paneli |
 | `docs/widget.js` | iPhone widget skripti (quraşdırma səhifəsi onu kopyalayır) |
 | `docs/facts.json` | Bütün faktlar |
@@ -33,7 +36,7 @@ iPhone widget-i (Scriptable)
 
 - **Yeni fakt** və ya **Toplu əlavə et** ilə faktları siyahıya əlavə edin. Toplu əlavə üç formatı qəbul edir: sətir-sətir mətn (`Kateqoriya | Fakt | Mənbə`), CSV (`fakt;kateqoriya;mənbə`) və JSON.
 - Dəyişikliklər əvvəl brauzerdə qalır. **Dərc et** düyməsi onları GitHub-a yazır.
-- Dərcdən sonra Pages saytı bir-iki dəqiqəyə yenilənir, widget-lər növbəti yenilənmədə yeni faktı götürür.
+- Dərcdən sonra widget-lər növbəti yenilənmədə yeni faktı götürür. `raw.githubusercontent.com` keşi təxminən 5 dəqiqədir, ona görə dəyişiklik dərhal görünməyə bilər.
 - **Ayarlar** bölməsində widget-in adı, rəng mövzusu və alt qeyd bütün istifadəçilər üçün dəyişir.
 - Siyahıdakı ilk 16 fakt **nümunədir** (`"sample": true`). Real faktları əlavə edib mənbələri yoxladıqdan sonra “Nümunələri sil” düyməsi ilə təmizləyin.
 
@@ -44,7 +47,7 @@ iPhone widget-i (Scriptable)
 Widget-in **Parameter** sahəsi:
 
 - `Əmək hüququ` yalnız bu kateqoriyanın faktlarını göstərir.
-- `kateqoriya=Əmək hüququ;movzu=ocean` həm kateqoriyanı, həm rəngi seçir. Mövzular: `ink`, `night`, `ocean`, `sunset`, `forest`, `light`.
+- `kateqoriya=Əmək hüququ;movzu=ocean` həm kateqoriyanı, həm rəngi seçir. Mövzular: `kalkhan` (standart: krem fon, qara çərçivə, kateqoriyaya görə pastel kart), `court` (maqon və qızıl), `ink`, `night`, `ocean`, `sunset`, `forest`, `light`.
 
 ## Data formatı
 
@@ -64,7 +67,7 @@ Widget-in **Parameter** sahəsi:
 
 ## Təhlükəsizlik və məhdudiyyətlər
 
-- **Faktlar public-dir.** Repo və Pages public olduğuna görə faktları hər kəs oxuya bilər. Məxfi məlumat yükləməyin.
+- **Faktlar public-dir.** Repo public olduğuna görə faktları hər kəs oxuya bilər. Məxfi məlumat yükləməyin. Widget-in data oxuması üçün repo public qalmalıdır.
 - **Yazmaq yalnız token sahibinə açıqdır.** Admin səhifəsini hər kəs görə bilər, amma tokensiz heç nəyi dəyişə bilməz. Tokeni paylaşmayın, işdən ayrılan əməkdaşın tokenini ləğv edin.
 - **Widget yalnız data oxuyur.** Telefonda işləyən kod quraşdırma anında kopyalanan koddur. Repo-dakı dəyişiklik istifadəçilərin telefonundakı kodu dəyişdirmir. Kodu yeniləmək lazım olsa, istifadəçilər quraşdırma səhifəsindən yenidən kopyalayır.
 - **iOS yeniləmə vaxtını özü seçir.** Widget-in hər ekran açılışında yenilənməsinə icazə yoxdur. Skript hər yenilənmədə yeni fakt seçir və təxminən 5 dəqiqədən bir yenilənmək istəyir. iOS bunu bəzən gecikdirir.
