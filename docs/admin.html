@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Hüquq faktları — idarə paneli</title>
+<style>
+  :root {
+    --paper: #F2F4F6;
+    --sheet: #FFFFFF;
+    --ink: #1B2A4A;
+    --muted: #5E6B80;
+    --rule: #CBD3DC;
+    --rule-soft: #E3E8EE;
+    --stamp: #2340C8;
+    --stamp-deep: #14213D;
+    --stamp-wash: #E8ECFB;
+    --seal: #B8322A;
+    --seal-wash: #FBEAE8;
+    --ok: #1F7A4D;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.45 var(--sans); }
+  [hidden] { display: none !important; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--stamp) 55%, white); outline-offset: 2px; }
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  /* ───── düymələr ───── */
+  .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); cursor: pointer; font-weight: 600; white-space: nowrap; transition: background .15s, border-color .15s; }
+  .btn:hover { border-color: var(--stamp); }
+  .btn.primary { background: var(--stamp); border-color: var(--stamp); color: #fff; }
+  .btn.primary:hover { background: #1A33A8; }
+  .btn.primary:disabled { background: #AEB8DF; border-color: #AEB8DF; cursor: not-allowed; }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+  .btn.ghost:hover { color: var(--ink); border-color: var(--rule); }
+  .btn.danger { color: var(--seal); }
+  .btn.danger:hover { border-color: var(--seal); }
+  .btn.small { min-height: 32px; padding: 0 12px; font-size: 13.5px; }
+  .btn svg { width: 16px; height: 16px; }
+
+  /* ───── giriş ───── */
+  .login { min-height: 100vh; display: grid; grid-template-columns: minmax(320px, 5fr) 6fr; }
+  .login-side { background: var(--stamp-deep); color: #fff; padding: 56px 48px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .login-side .big-seal { position: absolute; right: -90px; bottom: -90px; width: 420px; height: 420px; color: #fff; opacity: .1; transform: rotate(-14deg); }
+  .login-side h1 { font: 600 34px/1.2 var(--serif); margin: 0 0 14px; max-width: 14ch; }
+  .login-side p { margin: 0; max-width: 34ch; color: #C3CCF2; }
+  .login-side .mini { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+  .login-side .mini svg { width: 40px; height: 40px; }
+  .login-main { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+  .login-form { width: 100%; max-width: 420px; display: grid; gap: 18px; }
+  .login-form h2 { font: 600 24px/1.2 var(--serif); margin: 0; }
+  .field { display: grid; gap: 6px; }
+  .field > span { font-weight: 600; font-size: 13.5px; }
+  .field small { color: var(--muted); font-size: 12.5px; }
+  .field input[type=text], .field input[type=password], .field input[type=search], .field select, .field textarea { width: 100%; border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; background: var(--sheet); }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--stamp); outline: none; box-shadow: 0 0 0 3px var(--stamp-wash); }
+  .check { display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  .error { background: var(--seal-wash); color: var(--seal); border-left: 3px solid var(--seal); padding: 10px 12px; border-radius: 4px; font-size: 14px; }
+  details.help { border-top: 1px solid var(--rule-soft); padding-top: 14px; color: var(--muted); font-size: 14px; }
+  details.help summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  details.help ol { padding-left: 20px; margin: 10px 0 0; display: grid; gap: 6px; }
+  code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--stamp-wash); padding: 1px 5px; border-radius: 4px; }
+
+  /* ───── yuxarı zolaq ───── */
+  .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; background: var(--sheet); border-bottom: 1px solid var(--rule); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand svg { width: 38px; height: 38px; color: var(--stamp); flex: none; }
+  .brand strong { display: block; font: 600 18px/1.2 var(--serif); }
+  .brand span { display: block; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .pending { font-size: 13.5px; font-weight: 600; color: var(--seal); display: inline-flex; align-items: center; gap: 8px; margin-right: 6px; }
+  .pending::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--seal); }
+  .pending.clean { color: var(--ok); }
+  .pending.clean::before { background: var(--ok); }
+
+  /* ───── əsas düzən ───── */
+  .shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 0; max-width: 1280px; margin: 0 auto; padding: 24px; align-items: start; }
+  .index { position: sticky; top: 86px; padding-right: 22px; max-height: calc(100vh - 110px); overflow: auto; }
+  .index h2 { font: 600 14px/1.2 var(--sans); color: var(--muted); margin: 0 0 8px; }
+  .index ul { list-style: none; margin: 0; padding: 0; }
+  .index li button { width: 100%; text-align: left; display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px; border: 0; border-left: 3px solid transparent; background: none; cursor: pointer; font-size: 14px; color: var(--ink); border-radius: 0 6px 6px 0; }
+  .index li button:hover { background: var(--rule-soft); }
+  .index li button[aria-current=true] { border-left-color: var(--stamp); background: var(--stamp-wash); font-weight: 600; }
+  .index li button i { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
+  main { min-width: 0; }
+  .banner { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: #FFF6DC; border: 1px solid #EBD28A; border-left-width: 4px; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+  .summary { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  .summary b { color: var(--ink); font: 600 22px/1 var(--serif); margin-right: 5px; font-variant-numeric: tabular-nums; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .toolbar .grow { flex: 1 1 220px; min-width: 180px; }
+  .toolbar input[type=search], .toolbar select { width: 100%; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; min-height: 38px; background: var(--sheet); }
+  .toolbar select { width: auto; }
+  .toolbar .mobile-cat { display: none; }
+  .bulkbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--stamp-deep); color: #fff; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
+  .bulkbar b { margin-right: 6px; }
+  .bulkbar .btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); min-height: 32px; padding: 0 12px; font-size: 13.5px; }
+  .bulkbar .btn:hover { border-color: #fff; }
+
+  /* ───── reyestr ───── */
+  .register { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .reghead { display: flex; align-items: center; gap: 14px; padding: 9px 16px; border-bottom: 1px solid var(--rule); background: #FAFBFC; color: var(--muted); font-size: 13px; }
+  .row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--rule-soft); align-items: start; }
+  .row:last-child { border-bottom: 0; }
+  .row:hover { background: #FAFBFD; }
+  .row.sel { background: var(--stamp-wash); }
+  .row.off .fact { color: var(--muted); }
+  .row input[type=checkbox], .reghead input[type=checkbox], .check input { width: 17px; height: 17px; accent-color: var(--stamp); margin: 2px 0 0; }
+  .fact { margin: 0 0 6px; font: 16px/1.55 var(--serif); overflow-wrap: anywhere; }
+  .meta { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); }
+  .meta .cat { color: var(--stamp); font-weight: 600; }
+  .tag { padding: 0 7px; border-radius: 4px; font-weight: 600; font-size: 12px; background: var(--seal-wash); color: var(--seal); }
+  .tag.sample { background: #FFF1C7; color: #7A5A00; }
+  .ctrl { display: flex; align-items: center; gap: 6px; }
+  .icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 0; background: none; cursor: pointer; color: var(--muted); }
+  .icon:hover { background: var(--rule-soft); color: var(--ink); }
+  .icon.danger:hover { background: var(--seal-wash); color: var(--seal); }
+  .icon svg { width: 18px; height: 18px; }
+  .switch { position: relative; width: 38px; height: 22px; display: inline-block; flex: none; }
+  .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; width: 100%; height: 100%; }
+  .switch i { position: absolute; inset: 0; border-radius: 22px; background: #B7C0CD; transition: background .15s; }
+  .switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+  .switch input:checked + i { background: var(--stamp); }
+  .switch input:checked + i::after { transform: translateX(16px); }
+  .switch input:focus-visible + i { outline: 3px solid color-mix(in srgb, var(--stamp) 55%, white); outline-offset: 2px; }
+  .empty { padding: 48px 20px; text-align: center; color: var(--muted); }
+  .empty strong { display: block; font: 600 18px var(--serif); color: var(--ink); margin-bottom: 6px; }
+  .pager { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; color: var(--muted); font-size: 14px; }
+  .pager .btns { display: flex; gap: 8px; }
+
+  /* ───── dialoqlar ───── */
+  dialog { border: 0; padding: 0; border-radius: 12px; width: min(640px, 94vw); box-shadow: 0 24px 60px rgba(20,33,61,.35); color: var(--ink); background: var(--sheet); }
+  dialog::backdrop { background: rgba(20,33,61,.5); }
+  .dlg-head { padding: 18px 22px 0; }
+  .dlg-head h3 { margin: 0; font: 600 20px/1.25 var(--serif); }
+  .dlg-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  .dlg-body { padding: 16px 22px; display: grid; gap: 16px; }
+  .dlg-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--rule-soft); background: #FAFBFC; border-radius: 0 0 12px 12px; }
+  .counter { font-size: 12.5px; color: var(--muted); text-align: right; }
+  .counter.warn { color: var(--seal); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--rule); }
+  .tabs button { border: 0; background: none; padding: 9px 14px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; cursor: pointer; }
+  .tabs button[aria-selected=true] { color: var(--stamp); border-bottom-color: var(--stamp); }
+  .preview { border: 1px solid var(--rule-soft); border-radius: 8px; background: #FAFBFC; padding: 10px 14px; font-size: 14px; }
+  .preview ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font: 14px/1.5 var(--serif); }
+  .preview .good { color: var(--ok); font-weight: 600; }
+  .preview .bad { color: var(--seal); font-weight: 600; }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatches label { cursor: pointer; text-align: center; font-size: 12.5px; color: var(--muted); }
+  .swatches input { position: absolute; opacity: 0; }
+  .swatches span.sw { display: block; width: 54px; height: 54px; border-radius: 14px; margin-bottom: 4px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .swatches input:checked + span.sw { box-shadow: 0 0 0 3px var(--stamp); }
+  .swatches input:focus-visible + span.sw { outline: 3px solid color-mix(in srgb, var(--stamp) 55%, white); outline-offset: 3px; }
+
+  .toast { position: fixed; left: 24px; bottom: 24px; z-index: 50; max-width: min(460px, calc(100vw - 48px)); background: var(--stamp-deep); color: #fff; padding: 12px 16px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.3); font-size: 14px; }
+  .toast.err { background: var(--seal); }
+  .toast.ok { background: var(--ok); }
+
+  @media (max-width: 900px) {
+    .login { grid-template-columns: 1fr; }
+    .login-side { padding: 28px 24px; min-height: 0; gap: 24px; }
+    .login-side h1 { font-size: 26px; }
+    .shell { grid-template-columns: 1fr; padding: 16px; }
+    .index { display: none; }
+    .toolbar .mobile-cat { display: block; }
+    .top { padding: 10px 16px; flex-wrap: wrap; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- möhür nişanı -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="seal" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="5"/>
+      <circle cx="100" cy="100" r="58" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <path id="sealPath" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0" fill="none"/>
+      <text font-family="Georgia, serif" font-size="17" font-weight="700" letter-spacing="3.2" fill="currentColor">
+        <textPath href="#sealPath" startOffset="0">HÜQUQ FAKTLARI · MƏRKƏZ · HÜQUQ FAKTLARI · MƏRKƏZ ·</textPath>
+      </text>
+      <text x="100" y="128" text-anchor="middle" font-family="Georgia, serif" font-size="82" font-weight="700" fill="currentColor">§</text>
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 6.5l4 4" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M5 19h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<!-- ═════════ GİRİŞ ═════════ -->
+<section class="login" id="login">
+  <div class="login-side">
+    <div class="mini"><svg><use href="#seal"/></svg><span>Hüquq faktları</span></div>
+    <div>
+      <h1>Faktları bir yerdə yazın, hər telefon özü götürsün.</h1>
+      <p>Burada əlavə etdiyiniz hər fakt dərc olunduqdan sonra istifadəçilərin widget-lərində təsadüfi sırada görünür.</p>
+    </div>
+    <svg class="big-seal" aria-hidden="true"><use href="#seal"/></svg>
+  </div>
+  <div class="login-main">
+    <form class="login-form" id="loginForm" autocomplete="off">
+      <h2>Admin girişi</h2>
+      <label class="field"><span>GitHub repo</span>
+        <input type="text" id="inRepo" placeholder="istifadəçi/repo-adı" required spellcheck="false">
+        <small>Səhifə GitHub Pages-dədirsə avtomatik doldurulur.</small>
+      </label>
+      <label class="field"><span>Branch</span>
+        <input type="text" id="inBranch" value="main" required spellcheck="false">
+      </label>
+      <label class="field"><span>Giriş tokeni</span>
+        <input type="password" id="inToken" placeholder="github_pat_…" required spellcheck="false" autocomplete="off">
+        <small>Token yalnız bu brauzerdə qalır və yalnız GitHub-a göndərilir.</small>
+      </label>
+      <label class="check"><input type="checkbox" id="inRemember"> Bu cihazda yadda saxla</label>
+      <div class="error" id="loginErr" hidden></div>
+      <button class="btn primary" type="submit" id="loginBtn" style="justify-content:center">Daxil ol</button>
+      <details class="help">
+        <summary>Token necə yaradılır?</summary>
+        <ol>
+          <li>GitHub-da <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens</b> bölməsinə keçin.</li>
+          <li><b>Repository access</b> üçün yalnız bu repo-nu seçin.</li>
+          <li><b>Permissions → Contents</b> hüququnu <code>Read and write</code> edin.</li>
+          <li>Yaranan tokeni buraya yapışdırın. Tokeni başqası ilə paylaşmayın.</li>
+        </ol>
+      </details>
+    </form>
+  </div>
+</section>
+
+<!-- ═════════ PANEL ═════════ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="brand">
+      <svg aria-hidden="true"><use href="#seal"/></svg>
+      <div><strong>Hüquq faktları</strong><span id="repoName"></span></div>
+    </div>
+    <div class="top-actions">
+      <span class="pending clean" id="pending" role="status"></span>
+      <button class="btn ghost" id="btnSettings" type="button">Ayarlar</button>
+      <button class="btn ghost" id="btnReload" type="button">Yenidən yüklə</button>
+      <button class="btn ghost" id="btnLogout" type="button">Çıxış</button>
+      <button class="btn primary" id="btnPublish" type="button" disabled>Dərc et</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="index" aria-label="Kateqoriyalar">
+      <h2>Kateqoriyalar</h2>
+      <ul id="catList"></ul>
+    </aside>
+
+    <main>
+      <div class="banner" id="sampleBanner" hidden></div>
+      <p class="summary" id="summary"></p>
+
+      <div class="toolbar">
+        <div class="grow"><input type="search" id="q" placeholder="Fakt, kateqoriya və ya mənbə üzrə axtar" aria-label="Axtar"></div>
+        <select id="catSel" class="mobile-cat" aria-label="Kateqoriya"></select>
+        <select id="statusSel" aria-label="Status">
+          <option value="all">Hamısı</option>
+          <option value="active">Aktiv</option>
+          <option value="off">Gizli</option>
+        </select>
+        <button class="btn primary" id="btnNew" type="button"><svg><use href="#i-plus"/></svg>Yeni fakt</button>
+        <button class="btn" id="btnBulk" type="button"><svg><use href="#i-up"/></svg>Toplu əlavə et</button>
+        <button class="btn" id="btnExport" type="button"><svg><use href="#i-down"/></svg>Endir</button>
+      </div>
+
+      <div class="bulkbar" id="bulkbar" hidden>
+        <b id="bulkCount"></b>
+        <button class="btn" data-bulk="on" type="button">Aktiv et</button>
+        <button class="btn" data-bulk="off" type="button">Gizlə</button>
+        <button class="btn" data-bulk="cat" type="button">Kateqoriyanı dəyiş</button>
+        <button class="btn" data-bulk="del" type="button">Sil</button>
+        <button class="btn" data-bulk="clear" type="button">Seçimi ləğv et</button>
+      </div>
+
+      <div class="register" id="register">
+        <div class="reghead">
+          <input type="checkbox" id="selPage" aria-label="Bu səhifədəkilərin hamısını seç">
+          <span id="resultInfo"></span>
+        </div>
+        <div id="rows"></div>
+      </div>
+      <div class="pager" id="pager"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ═════════ DİALOQLAR ═════════ -->
+<dialog id="editDlg">
+  <form id="editForm" novalidate>
+    <div class="dlg-head"><h3 id="editTitle">Yeni fakt</h3><p>Fakt əvvəlcə siyahıya düşür. İstifadəçilər onu “Dərc et”dən sonra görür.</p></div>
+    <div class="dlg-body">
+      <label class="field"><span>Fakt mətni</span>
+        <textarea id="fText" maxlength="500" rows="5" required></textarea>
+        <div class="counter" id="fCount">0 / 500</div>
+      </label>
+      <label class="field"><span>Kateqoriya</span>
+        <input type="text" id="fCat" list="catData" placeholder="Məsələn: Əmək hüququ">
+        <datalist id="catData"></datalist>
+      </label>
+      <label class="field"><span>Mənbə</span>
+        <input type="text" id="fSrc" placeholder="Qanun, maddə və ya sənəd adı">
+        <small>Mümkünsə qanunun adını və maddəsini yazın. Bu, faktın etibarlılığını artırır.</small>
+      </label>
+      <label class="check"><input type="checkbox" id="fActive" checked> Widget-lərdə göstərilsin</label>
+      <div class="error" id="editErr" hidden></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" type="button" data-close>Ləğv et</button>
+      <button class="btn primary" type="submit" id="editSave">Saxla</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="bulkDlg">
+  <form id="bulkForm" novalidate>
+    <div class="dlg-head"><h3>Toplu əlavə et</h3><p>Yüzlərlə faktı bir dəfəyə siyahıya əlavə edin. Təkrar mətnlər keçilir.</p></div>
+    <div class="dlg-body">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="paste">Mətn yapışdır</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="file">Fayl seç</button>
+      </div>
+      <div id="tabPaste" class="field">
+        <textarea id="bPaste" rows="9" spellcheck="false" placeholder="Hər sətir bir fakt.&#10;İstəsəniz belə yaza bilərsiniz:&#10;Kateqoriya | Fakt mətni | Mənbə"></textarea>
+        <small>Sətir formatları: <code>Fakt</code>, <code>Kateqoriya | Fakt</code>, <code>Kateqoriya | Fakt | Mənbə</code>. CSV və JSON da yapışdıra bilərsiniz.</small>
+      </div>
+      <div id="tabFile" class="field" hidden>
+        <input type="file" id="bFile" accept=".csv,.json,.txt,text/csv,application/json,text/plain">
+        <small>CSV üçün sütun başlıqları: <code>fakt</code>, <code>kateqoriya</code>, <code>mənbə</code>. Excel-dən “CSV UTF-8” kimi saxlayın.</small>
+      </div>
+      <label class="field"><span>Kateqoriyası yazılmayan faktlar üçün</span>
+        <input type="text" id="bDefCat" list="catData" placeholder="Məsələn: Ümumi hüquq">
+      </label>
+      <div class="preview" id="bPreview" aria-live="polite">Hələ heç nə yapışdırılmayıb.</div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" type="button" data-close>Ləğv et</button>
+      <button class="btn primary" type="submit" id="bGo" disabled>Siyahıya əlavə et</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="setDlg">
+  <form id="setForm" novalidate>
+    <div class="dlg-head"><h3>Widget ayarları</h3><p>Bu ayarlar bütün istifadəçilərin widget-lərinə şamil olunur.</p></div>
+    <div class="dlg-body">
+      <label class="field"><span>Widget-də görünən ad</span>
+        <input type="text" id="sTitle" maxlength="40">
+      </label>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend style="font-weight:600;font-size:13.5px;margin-bottom:8px">Rəng mövzusu</legend>
+        <div class="swatches" id="sThemes"></div>
+      </fieldset>
+      <label class="field"><span>Böyük widget-in alt qeydi</span>
+        <input type="text" id="sFooter" maxlength="90">
+        <small>Məsələn, faktların hüquqi məsləhət olmadığını bildirən cümlə.</small>
+      </label>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" type="button" data-close>Ləğv et</button>
+      <button class="btn primary" type="submit">Saxla</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="askDlg">
+  <form id="askForm" method="dialog">
+    <div class="dlg-head"><h3 id="askTitle"></h3><p id="askText"></p></div>
+    <div class="dlg-body" id="askBody" hidden>
+      <label class="field"><span id="askLabel"></span><input type="text" id="askInput" list="catData"></label>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" type="button" id="askNo">Ləğv et</button>
+      <button class="btn primary" type="submit" id="askYes">Təsdiq et</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const norm = (s) => String(s ?? '').toLocaleLowerCase('az').replace(/\s+/g, ' ').trim();
+  const dupKey = (s) => norm(s).replace(/[^\p{L}\p{N} ]+/gu, '');
+
+  const FILES = { facts: 'docs/facts.json', meta: 'docs/meta.json' };
+  const THEMES = [
+    ['ink', 'Möhür', 'linear-gradient(135deg,#14213D,#2340C8)'],
+    ['night', 'Gecə', 'linear-gradient(135deg,#0F172A,#3B2F8F)'],
+    ['ocean', 'Dəniz', 'linear-gradient(135deg,#0B3954,#0891B2)'],
+    ['sunset', 'Qürub', 'linear-gradient(135deg,#7C2D12,#DB2777)'],
+    ['forest', 'Meşə', 'linear-gradient(135deg,#052E16,#15803D)'],
+    ['light', 'İşıq', 'linear-gradient(135deg,#F8FAFC,#DDE5FF)'],
+  ];
+  const DEFAULT_SETTINGS = { title: 'Hüquq faktı', theme: 'ink', footer: 'Ümumi məlumat xarakterlidir, hüquqi məsləhət deyil.' };
+
+  const S = {
+    owner: '', repo: '', branch: 'main', token: '',
+    facts: [], settings: { ...DEFAULT_SETTINGS },
+    base: { facts: new Map(), settings: '' },
+    shas: { facts: null, meta: null },
+    q: '', cat: '*', status: 'all', page: 1, pageSize: 50,
+    sel: new Set(), editing: null, busy: false,
+  };
+
+  // ───────────── köməkçilər ─────────────
+  const utf8ToB64 = (str) => {
+    const bytes = new TextEncoder().encode(str);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  };
+  const b64ToUtf8 = (b64) => {
+    const bin = atob(b64.replace(/\s/g, ''));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  };
+  const newId = () => 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const sig = (f) => JSON.stringify([f.text, f.category || '', f.source || '', f.active !== false, !!f.sample]);
+
+  let toastTimer;
+  function toast(msg, kind) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.className = 'toast' + (kind ? ' ' + kind : '');
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => (t.hidden = true), kind === 'err' ? 8000 : 4500);
+  }
+
+  function ask({ title, text, ok = 'Təsdiq et', danger = false, input = null }) {
+    return new Promise((resolve) => {
+      const dlg = $('#askDlg');
+      $('#askTitle').textContent = title;
+      $('#askText').textContent = text || '';
+      $('#askYes').textContent = ok;
+      $('#askYes').className = 'btn primary';
+      if (danger) $('#askYes').style.background = 'var(--seal)', $('#askYes').style.borderColor = 'var(--seal)';
+      else $('#askYes').style.background = $('#askYes').style.borderColor = '';
+      $('#askBody').hidden = !input;
+      if (input) { $('#askLabel').textContent = input.label; $('#askInput').value = input.value || ''; }
+      let result = null;
+      const done = (v) => { result = v; dlg.close(); };
+      const onSubmit = (e) => { e.preventDefault(); done(input ? $('#askInput').value.trim() : true); };
+      const onNo = () => done(null);
+      const onClose = () => {
+        $('#askForm').removeEventListener('submit', onSubmit);
+        $('#askNo').removeEventListener('click', onNo);
+        dlg.removeEventListener('close', onClose);
+        resolve(result);
+      };
+      $('#askForm').addEventListener('submit', onSubmit);
+      $('#askNo').addEventListener('click', onNo);
+      dlg.addEventListener('close', onClose);
+      dlg.showModal();
+      if (input) $('#askInput').focus();
+    });
+  }
+
+  // ───────────── GitHub API ─────────────
+  async function gh(path, opts = {}) {
+    const res = await fetch('https://api.github.com' + path, {
+      ...opts,
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: 'Bearer ' + S.token,
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...(opts.headers || {}),
+      },
+    });
+    if (!res.ok) {
+      let msg = res.statusText;
+      try { msg = (await res.json()).message || msg; } catch (e) {}
+      const err = new Error(msg);
+      err.status = res.status;
+      throw err;
+    }
+    return res;
+  }
+
+  async function readFile(p) {
+    const base = `/repos/${S.owner}/${S.repo}/contents/${p}?ref=${encodeURIComponent(S.branch)}&_=${Date.now()}`;
+    try {
+      const j = await (await gh(base)).json();
+      let text;
+      if (j.content && j.encoding === 'base64') text = b64ToUtf8(j.content);
+      else text = await (await gh(base, { headers: { Accept: 'application/vnd.github.raw+json' } })).text();
+      return { sha: j.sha, text };
+    } catch (e) {
+      if (e.status === 404) return { sha: null, text: null };
+      throw e;
+    }
+  }
+
+  async function writeFile(p, text, sha, message) {
+    const body = { message, content: utf8ToB64(text), branch: S.branch };
+    if (sha) body.sha = sha;
+    const j = await (await gh(`/repos/${S.owner}/${S.repo}/contents/${p}`, { method: 'PUT', body: JSON.stringify(body) })).json();
+    return j.content.sha;
+  }
+
+  // ───────────── yükləmə / dərc ─────────────
+  function snapshot() {
+    S.base.facts = new Map(S.facts.map((f) => [f.id, { ...f }]));
+    S.base.settings = JSON.stringify(S.settings);
+  }
+
+  async function loadAll() {
+    const [fRes, mRes] = await Promise.all([readFile(FILES.facts), readFile(FILES.meta)]);
+    let facts = [];
+    if (fRes.text) {
+      const data = JSON.parse(fRes.text);
+      facts = Array.isArray(data) ? data : data.facts || [];
+    }
+    S.facts = facts
+      .filter((f) => f && typeof f.text === 'string' && f.text.trim())
+      .map((f) => ({ id: f.id || newId(), text: f.text, category: f.category || '', source: f.source || '', active: f.active !== false, ...(f.sample ? { sample: true } : {}), createdAt: f.createdAt || new Date().toISOString() }));
+    S.shas.facts = fRes.sha;
+    let settings = {};
+    if (mRes.text) { try { settings = JSON.parse(mRes.text).settings || {}; } catch (e) {} }
+    S.shas.meta = mRes.sha;
+    S.settings = { ...DEFAULT_SETTINGS, ...settings };
+    S.sel.clear();
+    snapshot();
+  }
+
+  function diff() {
+    const cur = new Map(S.facts.map((f) => [f.id, f]));
+    let added = 0, removed = 0, edited = 0;
+    for (const [id, f] of cur) {
+      const b = S.base.facts.get(id);
+      if (!b) added++; else if (sig(b) !== sig(f)) edited++;
+    }
+    for (const id of S.base.facts.keys()) if (!cur.has(id)) removed++;
+    const settings = JSON.stringify(S.settings) !== S.base.settings;
+    return { added, removed, edited, settings, total: added + removed + edited + (settings ? 1 : 0) };
+  }
+
+  const cleanFact = (f) => {
+    const o = { id: f.id, text: f.text, category: f.category || '', source: f.source || '', active: f.active !== false };
+    if (f.sample) o.sample = true;
+    o.createdAt = f.createdAt || new Date().toISOString();
+    return o;
+  };
+
+  async function publish() {
+    const d = diff();
+    if (!d.total || S.busy) return;
+    S.busy = true;
+    renderTop();
+    try {
+      const now = new Date().toISOString();
+      const lines = S.facts.map((f) => '    ' + JSON.stringify(cleanFact(f)));
+      const factsText = `{\n  "schemaVersion": 1,\n  "updatedAt": ${JSON.stringify(now)},\n  "facts": [\n${lines.join(',\n')}\n  ]\n}\n`;
+      const msg = `Admin: +${d.added} −${d.removed} ~${d.edited}${d.settings ? ' ayarlar' : ''}`;
+      S.shas.facts = await writeFile(FILES.facts, factsText, S.shas.facts, msg);
+      const meta = {
+        version: String(Date.now()),
+        updatedAt: now,
+        count: S.facts.length,
+        activeCount: S.facts.filter((f) => f.active !== false).length,
+        settings: S.settings,
+      };
+      S.shas.meta = await writeFile(FILES.meta, JSON.stringify(meta, null, 2) + '\n', S.shas.meta, msg + ' (meta)');
+      snapshot();
+      toast('Dərc olundu. Widget-lər bir neçə dəqiqə ərzində yeni faktları götürəcək.', 'ok');
+    } catch (e) {
+      if (e.status === 409 || e.status === 422) toast('Dərc alınmadı: fayl başqa yerdən dəyişdirilib. Dəyişikliklərinizi “Endir” ilə saxlayın, sonra “Yenidən yüklə” edin.', 'err');
+      else if (e.status === 401 || e.status === 403 || e.status === 404) toast('Dərc alınmadı: tokenin bu repo üçün Contents “Read and write” icazəsi olmalıdır.', 'err');
+      else toast('Dərc alınmadı: ' + e.message, 'err');
+    } finally {
+      S.busy = false;
+      renderAll();
+    }
+  }
+
+  // ───────────── siyahı məntiqi ─────────────
+  function catCounts() {
+    const m = new Map();
+    S.facts.forEach((f) => {
+      const k = f.category || '';
+      const o = m.get(k) || { total: 0, active: 0 };
+      o.total++; if (f.active !== false) o.active++;
+      m.set(k, o);
+    });
+    return m;
+  }
+
+  function filtered() {
+    const q = norm(S.q);
+    return S.facts.filter((f) => {
+      if (S.cat === '__none') { if (f.category) return false; }
+      else if (S.cat !== '*' && (f.category || '') !== S.cat) return false;
+      if (S.status === 'active' && f.active === false) return false;
+      if (S.status === 'off' && f.active !== false) return false;
+      if (q && !norm(f.text + ' ' + f.category + ' ' + f.source).includes(q)) return false;
+      return true;
+    });
+  }
+
+  // ───────────── render ─────────────
+  function renderTop() {
+    const d = diff();
+    const p = $('#pending');
+    if (S.busy) { p.className = 'pending'; p.textContent = 'Dərc olunur…'; }
+    else if (d.total) { p.className = 'pending'; p.textContent = `${d.total} dəyişiklik dərc olunmayıb`; }
+    else { p.className = 'pending clean'; p.textContent = 'Hamısı dərc olunub'; }
+    $('#btnPublish').disabled = S.busy || !d.total;
+    $('#btnPublish').textContent = S.busy ? 'Dərc olunur…' : 'Dərc et';
+  }
+
+  function renderIndex() {
+    const counts = catCounts();
+    const cats = Array.from(counts.keys()).filter(Boolean).sort((a, b) => a.localeCompare(b, 'az'));
+    const items = [['*', 'Hamısı', S.facts.length]];
+    cats.forEach((c) => items.push([c, c, counts.get(c).total]));
+    if (counts.has('')) items.push(['__none', 'Kateqoriyasız', counts.get('').total]);
+    $('#catList').innerHTML = items.map(([k, label, n]) => `<li><button type="button" data-cat="${esc(k)}" ${S.cat === k ? 'aria-current="true"' : ''}><span>${esc(label)}</span><i>${n}</i></button></li>`).join('');
+    $('#catSel').innerHTML = items.map(([k, label, n]) => `<option value="${esc(k)}" ${S.cat === k ? 'selected' : ''}>${esc(label)} (${n})</option>`).join('');
+    $('#catData').innerHTML = cats.map((c) => `<option value="${esc(c)}">`).join('');
+  }
+
+  function renderSummary() {
+    const active = S.facts.filter((f) => f.active !== false).length;
+    const cats = new Set(S.facts.map((f) => f.category).filter(Boolean)).size;
+    $('#summary').innerHTML = `<span><b>${S.facts.length}</b>fakt</span><span><b>${active}</b>aktiv</span><span><b>${S.facts.length - active}</b>gizli</span><span><b>${cats}</b>kateqoriya</span>`;
+    const samples = S.facts.filter((f) => f.sample).length;
+    const ban = $('#sampleBanner');
+    ban.hidden = !samples;
+    if (samples) {
+      ban.innerHTML = `<span>Siyahıda <b>${samples}</b> nümunə fakt var. Real faktları əlavə etdikdən sonra onları silin və mənbələri yoxlayın.</span><button class="btn small" id="btnDropSamples" type="button">Nümunələri sil</button>`;
+    }
+  }
+
+  function renderRows() {
+    const list = filtered();
+    const pages = Math.max(1, Math.ceil(list.length / S.pageSize));
+    if (S.page > pages) S.page = pages;
+    const start = (S.page - 1) * S.pageSize;
+    const slice = list.slice(start, start + S.pageSize);
+    $('#resultInfo').textContent = list.length === S.facts.length ? `${list.length} fakt` : `${list.length} nəticə (cəmi ${S.facts.length})`;
+    $('#selPage').checked = slice.length > 0 && slice.every((f) => S.sel.has(f.id));
+    if (!slice.length) {
+      $('#rows').innerHTML = S.facts.length
+        ? `<div class="empty"><strong>Heç nə tapılmadı</strong>Axtarışı və ya filtrləri dəyişin.</div>`
+        : `<div class="empty"><strong>Hələ fakt yoxdur</strong>“Yeni fakt” ilə başlayın və ya “Toplu əlavə et” ilə siyahı yükləyin.</div>`;
+    } else {
+      $('#rows').innerHTML = slice.map((f) => `
+        <div class="row ${f.active === false ? 'off' : ''} ${S.sel.has(f.id) ? 'sel' : ''}" data-id="${esc(f.id)}">
+          <input type="checkbox" data-act="sel" aria-label="Seç" ${S.sel.has(f.id) ? 'checked' : ''}>
+          <div class="entry">
+            <p class="fact">${esc(f.text)}</p>
+            <p class="meta">
+              ${f.category ? `<span class="cat">${esc(f.category)}</span>` : '<span>Kateqoriyasız</span>'}
+              ${f.source ? `<span>${esc(f.source)}</span>` : ''}
+              ${f.active === false ? '<span class="tag">gizli</span>' : ''}
+              ${f.sample ? '<span class="tag sample">nümunə</span>' : ''}
+            </p>
+          </div>
+          <div class="ctrl">
+            <label class="switch" title="Widget-lərdə göstər"><input type="checkbox" data-act="toggle" aria-label="Aktiv" ${f.active !== false ? 'checked' : ''}><i></i></label>
+            <button class="icon" type="button" data-act="edit" aria-label="Redaktə et"><svg><use href="#i-edit"/></svg></button>
+            <button class="icon danger" type="button" data-act="del" aria-label="Sil"><svg><use href="#i-trash"/></svg></button>
+          </div>
+        </div>`).join('');
+    }
+    const from = list.length ? start + 1 : 0;
+    const to = Math.min(start + S.pageSize, list.length);
+    $('#pager').innerHTML = pages > 1
+      ? `<span>${from}–${to} / ${list.length}</span><div class="btns"><button class="btn small" data-page="-1" ${S.page <= 1 ? 'disabled' : ''}>Əvvəlki</button><span style="align-self:center">${S.page} / ${pages}</span><button class="btn small" data-page="1" ${S.page >= pages ? 'disabled' : ''}>Növbəti</button></div>`
+      : '';
+    const n = S.sel.size;
+    $('#bulkbar').hidden = !n;
+    $('#bulkCount').textContent = `${n} fakt seçildi`;
+  }
+
+  function renderAll() {
+    renderTop(); renderIndex(); renderSummary(); renderRows();
+    $('#statusSel').value = S.status;
+  }
+
+  // ───────────── dəyişikliklər ─────────────
+  function setSettingsDirty() { renderTop(); }
+
+  function openEdit(id) {
+    S.editing = id || null;
+    const f = id ? S.facts.find((x) => x.id === id) : null;
+    $('#editTitle').textContent = f ? 'Faktı redaktə et' : 'Yeni fakt';
+    $('#fText').value = f ? f.text : '';
+    $('#fCat').value = f ? f.category || '' : (S.cat !== '*' && S.cat !== '__none' ? S.cat : '');
+    $('#fSrc').value = f ? f.source || '' : '';
+    $('#fActive').checked = f ? f.active !== false : true;
+    $('#editErr').hidden = true;
+    updateCount();
+    $('#editDlg').showModal();
+    $('#fText').focus();
+  }
+
+  function updateCount() {
+    const n = $('#fText').value.length;
+    const c = $('#fCount');
+    c.textContent = `${n} / 500` + (n > 300 ? ' · 300 simvoldan uzun mətn widget-də kiçik şriftlə görünür' : '');
+    c.className = 'counter' + (n > 300 ? ' warn' : '');
+  }
+
+  function saveEdit(e) {
+    e.preventDefault();
+    const text = $('#fText').value.trim().replace(/\s+/g, ' ');
+    const err = $('#editErr');
+    if (!text) { err.textContent = 'Fakt mətnini yazın.'; err.hidden = false; $('#fText').focus(); return; }
+    const key = dupKey(text);
+    if (S.facts.some((f) => f.id !== S.editing && dupKey(f.text) === key)) {
+      err.textContent = 'Eyni mətnli fakt artıq siyahıda var.'; err.hidden = false; return;
+    }
+    const data = { text, category: $('#fCat').value.trim(), source: $('#fSrc').value.trim(), active: $('#fActive').checked };
+    if (S.editing) {
+      const f = S.facts.find((x) => x.id === S.editing);
+      Object.assign(f, data);
+      delete f.sample;
+    } else {
+      S.facts.unshift({ id: newId(), ...data, createdAt: new Date().toISOString() });
+    }
+    $('#editDlg').close();
+    renderAll();
+    toast('Saxlandı. Dərc etmək üçün yuxarıdakı “Dərc et” düyməsinə basın.');
+  }
+
+  async function deleteFacts(ids, label) {
+    const ok = await ask({ title: label, text: 'Bu fakt(lar) siyahıdan silinəcək. Dərc etməyənə qədər geri qaytarmaq üçün “Yenidən yüklə” edə bilərsiniz.', ok: 'Sil', danger: true });
+    if (!ok) return;
+    const set = new Set(ids);
+    S.facts = S.facts.filter((f) => !set.has(f.id));
+    ids.forEach((id) => S.sel.delete(id));
+    renderAll();
+  }
+
+  // ───────────── toplu əlavə ─────────────
+  function parseCSV(text, delim) {
+    const rows = [];
+    let row = [], cur = '', q = false;
+    const pushRow = () => { row.push(cur); cur = ''; if (row.some((x) => x.trim() !== '')) rows.push(row); row = []; };
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+        else cur += c;
+      } else if (c === '"') q = true;
+      else if (c === delim) { row.push(cur); cur = ''; }
+      else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; pushRow(); }
+      else cur += c;
+    }
+    pushRow();
+    return rows;
+  }
+
+  const KEYS = {
+    text: ['text', 'fakt', 'mətn', 'metn', 'məzmun', 'mezmun'],
+    category: ['category', 'kateqoriya', 'sahə', 'sahe'],
+    source: ['source', 'mənbə', 'menbe', 'istinad'],
+  };
+  const pick = (obj, names) => {
+    for (const k of Object.keys(obj)) if (names.includes(norm(k))) return String(obj[k] ?? '').trim();
+    return '';
+  };
+
+  function parseBulk(raw) {
+    const text = raw.replace(/^﻿/, '').trim();
+    if (!text) return [];
+    if (text[0] === '[' || text[0] === '{') {
+      try {
+        let data = JSON.parse(text);
+        if (!Array.isArray(data)) data = data.facts || [];
+        return data.map((x) => (typeof x === 'string' ? { text: x.trim(), category: '', source: '' } : { text: pick(x, KEYS.text), category: pick(x, KEYS.category), source: pick(x, KEYS.source) }));
+      } catch (e) { /* JSON deyil, sətir kimi oxu */ }
+    }
+    const first = text.split(/\r?\n/)[0];
+    const delims = [',', ';', '\t'];
+    const delim = delims.map((d) => [d, first.split(d).length]).sort((a, b) => b[1] - a[1])[0];
+    const headerCells = delim[1] > 1 ? first.split(delim[0]).map((c) => norm(c.replace(/^"|"$/g, ''))) : [];
+    if (headerCells.some((c) => KEYS.text.includes(c))) {
+      const rows = parseCSV(text, delim[0]);
+      const head = rows.shift().map((c) => norm(c));
+      const idx = (names) => head.findIndex((h) => names.includes(h));
+      const iT = idx(KEYS.text), iC = idx(KEYS.category), iS = idx(KEYS.source);
+      return rows.map((r) => ({ text: (r[iT] || '').trim(), category: iC >= 0 ? (r[iC] || '').trim() : '', source: iS >= 0 ? (r[iS] || '').trim() : '' }));
+    }
+    return text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((line) => {
+      if (line.includes('|')) {
+        const p = line.split('|').map((x) => x.trim());
+        if (p.length >= 3) return { category: p[0], text: p[1], source: p.slice(2).join(' | ') };
+        return { category: p[0], text: p[1], source: '' };
+      }
+      return { text: line, category: '', source: '' };
+    });
+  }
+
+  let bulkRows = [];
+  function evalBulk() {
+    const defCat = $('#bDefCat').value.trim();
+    const rows = parseBulk($('#bPaste').value);
+    const existing = new Set(S.facts.map((f) => dupKey(f.text)));
+    const seen = new Set();
+    let empty = 0, dup = 0;
+    bulkRows = [];
+    rows.forEach((r) => {
+      const t = (r.text || '').replace(/\s+/g, ' ').trim();
+      if (!t) { empty++; return; }
+      const k = dupKey(t);
+      if (existing.has(k) || seen.has(k)) { dup++; return; }
+      seen.add(k);
+      bulkRows.push({ text: t.slice(0, 500), category: r.category || defCat, source: r.source || '' });
+    });
+    const box = $('#bPreview');
+    if (!rows.length) { box.textContent = 'Hələ heç nə yapışdırılmayıb.'; }
+    else {
+      box.innerHTML = `<span class="good">${bulkRows.length} yeni fakt əlavə olunacaq.</span>` +
+        (dup ? ` <span class="bad">${dup} təkrar keçiləcək.</span>` : '') +
+        (empty ? ` <span class="bad">${empty} boş sətir keçiləcək.</span>` : '') +
+        (bulkRows.length ? `<ul>${bulkRows.slice(0, 4).map((r) => `<li>${esc(r.text.length > 110 ? r.text.slice(0, 110) + '…' : r.text)}${r.category ? ' <i>(' + esc(r.category) + ')</i>' : ''}</li>`).join('')}${bulkRows.length > 4 ? `<li>… və daha ${bulkRows.length - 4} fakt</li>` : ''}</ul>` : '');
+    }
+    $('#bGo').disabled = !bulkRows.length;
+    $('#bGo').textContent = bulkRows.length ? `${bulkRows.length} faktı siyahıya əlavə et` : 'Siyahıya əlavə et';
+  }
+
+  function goBulk(e) {
+    e.preventDefault();
+    if (!bulkRows.length) return;
+    const now = new Date().toISOString();
+    const add = bulkRows.map((r) => ({ id: newId(), text: r.text, category: r.category, source: r.source, active: true, createdAt: now }));
+    S.facts = add.concat(S.facts);
+    $('#bulkDlg').close();
+    renderAll();
+    toast(`${add.length} fakt siyahıya əlavə olundu. Dərc etmək üçün “Dərc et” düyməsinə basın.`);
+  }
+
+  // ───────────── endirmə ─────────────
+  function download(name, mime, text) {
+    const url = URL.createObjectURL(new Blob([text], { type: mime }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function exportFacts() {
+    const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    const csv = '﻿fakt;kateqoriya;mənbə;aktiv\n' + S.facts.map((f) => [q(f.text), q(f.category), q(f.source), f.active !== false ? 'bəli' : 'xeyr'].join(';')).join('\n') + '\n';
+    download('huquq-faktlari.csv', 'text/csv;charset=utf-8', csv);
+  }
+
+  // ───────────── hadisələr ─────────────
+  function bind() {
+    $('#q').addEventListener('input', (e) => { S.q = e.target.value; S.page = 1; renderRows(); });
+    $('#statusSel').addEventListener('change', (e) => { S.status = e.target.value; S.page = 1; renderRows(); });
+    $('#catSel').addEventListener('change', (e) => { S.cat = e.target.value; S.page = 1; renderIndex(); renderRows(); });
+    $('#catList').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-cat]'); if (!b) return;
+      S.cat = b.dataset.cat; S.page = 1; renderIndex(); renderRows();
+    });
+    $('#pager').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-page]'); if (!b) return;
+      S.page += Number(b.dataset.page); renderRows(); window.scrollTo({ top: 0 });
+    });
+    $('#selPage').addEventListener('change', (e) => {
+      const list = filtered();
+      const slice = list.slice((S.page - 1) * S.pageSize, S.page * S.pageSize);
+      slice.forEach((f) => (e.target.checked ? S.sel.add(f.id) : S.sel.delete(f.id)));
+      renderRows();
+    });
+    $('#rows').addEventListener('click', (e) => {
+      const row = e.target.closest('.row'); if (!row) return;
+      const id = row.dataset.id;
+      const act = e.target.closest('[data-act]')?.dataset.act;
+      if (act === 'edit') openEdit(id);
+      else if (act === 'del') deleteFacts([id], 'Faktı sil');
+    });
+    $('#rows').addEventListener('change', (e) => {
+      const row = e.target.closest('.row'); if (!row) return;
+      const id = row.dataset.id;
+      const act = e.target.dataset.act;
+      if (act === 'sel') { e.target.checked ? S.sel.add(id) : S.sel.delete(id); renderRows(); }
+      if (act === 'toggle') { const f = S.facts.find((x) => x.id === id); f.active = e.target.checked; renderAll(); }
+    });
+    $('#bulkbar').addEventListener('click', async (e) => {
+      const b = e.target.closest('button[data-bulk]'); if (!b) return;
+      const ids = Array.from(S.sel);
+      const set = new Set(ids);
+      const act = b.dataset.bulk;
+      if (act === 'clear') { S.sel.clear(); renderRows(); }
+      else if (act === 'on' || act === 'off') { S.facts.forEach((f) => { if (set.has(f.id)) f.active = act === 'on'; }); renderAll(); }
+      else if (act === 'cat') {
+        const v = await ask({ title: 'Kateqoriyanı dəyiş', text: `${ids.length} fakt üçün yeni kateqoriya.`, ok: 'Tətbiq et', input: { label: 'Kateqoriya', value: '' } });
+        if (v === null) return;
+        S.facts.forEach((f) => { if (set.has(f.id)) f.category = v; });
+        renderAll();
+      } else if (act === 'del') deleteFacts(ids, `${ids.length} faktı sil`);
+    });
+    $('#sampleBanner').addEventListener('click', async (e) => {
+      if (!e.target.closest('#btnDropSamples')) return;
+      const n = S.facts.filter((f) => f.sample).length;
+      const ok = await ask({ title: 'Nümunə faktları sil', text: `${n} nümunə fakt siyahıdan silinəcək.`, ok: 'Sil', danger: true });
+      if (!ok) return;
+      S.facts = S.facts.filter((f) => !f.sample);
+      renderAll();
+    });
+
+    $('#btnNew').addEventListener('click', () => openEdit(null));
+    $('#fText').addEventListener('input', updateCount);
+    $('#editForm').addEventListener('submit', saveEdit);
+
+    $('#btnBulk').addEventListener('click', () => {
+      $('#bPaste').value = ''; $('#bFile').value = ''; $('#bDefCat').value = '';
+      evalBulk(); setTab('paste');
+      $('#bulkDlg').showModal();
+    });
+    $('#bPaste').addEventListener('input', evalBulk);
+    $('#bDefCat').addEventListener('input', evalBulk);
+    $('#bFile').addEventListener('change', async (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      $('#bPaste').value = await file.text();
+      evalBulk();
+    });
+    $$('.tabs button').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
+    $('#bulkForm').addEventListener('submit', goBulk);
+
+    $('#btnSettings').addEventListener('click', () => {
+      $('#sTitle').value = S.settings.title || '';
+      $('#sFooter').value = S.settings.footer ?? '';
+      $('#sThemes').innerHTML = THEMES.map(([k, label, grad]) => `<label><input type="radio" name="theme" value="${k}" ${S.settings.theme === k ? 'checked' : ''}><span class="sw" style="background:${grad}"></span>${label}</label>`).join('');
+      $('#setDlg').showModal();
+    });
+    $('#setForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      S.settings = {
+        title: $('#sTitle').value.trim() || DEFAULT_SETTINGS.title,
+        theme: ($('input[name=theme]:checked') || {}).value || 'ink',
+        footer: $('#sFooter').value.trim(),
+      };
+      $('#setDlg').close();
+      setSettingsDirty();
+      toast('Ayarlar saxlandı. Dərc etmək üçün “Dərc et” düyməsinə basın.');
+    });
+
+    $('#btnExport').addEventListener('click', exportFacts);
+    $('#btnPublish').addEventListener('click', publish);
+    $('#btnReload').addEventListener('click', async () => {
+      if (diff().total) {
+        const ok = await ask({ title: 'Yenidən yüklə', text: 'Dərc olunmamış dəyişikliklər itəcək.', ok: 'Yenidən yüklə', danger: true });
+        if (!ok) return;
+      }
+      try { await loadAll(); renderAll(); toast('GitHub-dakı son versiya yükləndi.'); } catch (e) { toast('Yüklənmədi: ' + e.message, 'err'); }
+    });
+    $('#btnLogout').addEventListener('click', async () => {
+      if (diff().total) {
+        const ok = await ask({ title: 'Çıxış', text: 'Dərc olunmamış dəyişikliklər itəcək.', ok: 'Çıx', danger: true });
+        if (!ok) return;
+      }
+      sessionStorage.removeItem('hf_token'); localStorage.removeItem('hf_token');
+      location.reload();
+    });
+    $$('dialog [data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+    window.addEventListener('beforeunload', (e) => { if (S.token && diff().total) { e.preventDefault(); e.returnValue = ''; } });
+  }
+
+  function setTab(name) {
+    $$('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+    $('#tabPaste').hidden = name !== 'paste';
+    $('#tabFile').hidden = name !== 'file';
+  }
+
+  // ───────────── giriş ─────────────
+  async function login(e) {
+    e && e.preventDefault();
+    const err = $('#loginErr');
+    err.hidden = true;
+    const repoVal = $('#inRepo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+    const m = repoVal.match(/^([\w.-]+)\/([\w.-]+)$/);
+    if (!m) { err.textContent = 'Repo adını “istifadəçi/repo-adı” formatında yazın.'; err.hidden = false; return; }
+    S.owner = m[1]; S.repo = m[2]; S.branch = $('#inBranch').value.trim() || 'main'; S.token = $('#inToken').value.trim();
+    $('#loginBtn').disabled = true; $('#loginBtn').textContent = 'Yoxlanılır…';
+    try {
+      const repo = await (await gh(`/repos/${S.owner}/${S.repo}`)).json();
+      if (repo.permissions && !repo.permissions.push) throw Object.assign(new Error('Bu token ilə repo-ya yazmaq olmur.'), { status: 403 });
+      await loadAll();
+      const store = $('#inRemember').checked ? localStorage : sessionStorage;
+      sessionStorage.removeItem('hf_token'); localStorage.removeItem('hf_token');
+      store.setItem('hf_token', S.token);
+      store.setItem('hf_repo', `${S.owner}/${S.repo}`);
+      store.setItem('hf_branch', S.branch);
+      $('#login').hidden = true;
+      $('#app').hidden = false;
+      $('#repoName').textContent = `${S.owner}/${S.repo} · ${S.branch}`;
+      bind();
+      renderAll();
+    } catch (e2) {
+      let msg = e2.message;
+      if (e2.status === 401) msg = 'Token yanlışdır və ya vaxtı bitib.';
+      else if (e2.status === 404) msg = 'Repo və ya fayllar tapılmadı. Repo adını, branch-i və tokenin bu repo-ya icazəsini yoxlayın.';
+      else if (e2.status === 403) msg = e2.message || 'İcazə yoxdur. Tokenə Contents “Read and write” icazəsi verin.';
+      else if (e2 instanceof TypeError) msg = 'GitHub-a qoşulmaq alınmadı. İnternet bağlantısını yoxlayın.';
+      err.textContent = msg; err.hidden = false;
+    } finally {
+      $('#loginBtn').disabled = false; $('#loginBtn').textContent = 'Daxil ol';
+    }
+  }
+
+  function init() {
+    const host = location.hostname;
+    let guess = '';
+    if (host.endsWith('.github.io')) {
+      const repo = location.pathname.split('/').filter(Boolean)[0];
+      if (repo && !repo.endsWith('.html')) guess = `${host.split('.')[0]}/${repo}`;
+    }
+    const store = localStorage.getItem('hf_token') ? localStorage : sessionStorage;
+    $('#inRepo').value = store.getItem('hf_repo') || guess;
+    $('#inBranch').value = store.getItem('hf_branch') || 'main';
+    const saved = store.getItem('hf_token');
+    if (saved) { $('#inToken').value = saved; $('#inRemember').checked = store === localStorage; }
+    $('#loginForm').addEventListener('submit', login);
+  }
+  init();
+})();
+</script>
+</body>
+</html>
