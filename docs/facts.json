@@ -1,7 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-03T11:01:13.082Z",
+  "updatedAt": "2026-11-04T16:55:53.585Z",
   "facts": [
+    {"id":"nmw2cylifxld1","text":"İtirilmiş əşyanı tapan şəxs bu barədə onu itirmiş şəxsə, əgər sahibi məlum deyilsə, polisə dərhal xəbər verməli və həmin əşyanı verməlidir. Əşyanı tapan şəxs tapılmış əşyanın dəyərinin beş faizinədək miqdarda bəxşiş tələb edə bilər.","category":"Mülki hüquq","source":"Mülki Məcəllənin 186-cı maddəsi","active":true,"createdAt":"2026-11-04T16:55:46.791Z"},
     {"id":"n0000001","text":"Qanunu bilməmək məsuliyyətdən azad etmir. Hüquq normasını bilmədiyini söyləyən şəxs də onun pozulmasına görə cavab verir.","category":"Ümumi hüquq","source":"Ümumi hüquq prinsipi (ignorantia juris non excusat)","active":true,"sample":true,"createdAt":"2026-11-03T08:40:00.000Z"},
     {"id":"n0000002","text":"Təqsirsizlik prezumpsiyası: şəxs təqsirli olduğu məhkəmənin qanuni qüvvəyə minmiş hökmü ilə sübut olunana qədər təqsirsiz sayılır.","category":"Cinayət hüququ","source":"Ümumi hüquq prinsipi","active":true,"sample":true,"createdAt":"2026-11-03T08:40:00.000Z"},
     {"id":"n0000003","text":"Qanunun geriyə qüvvəsi yoxdur: şəxsin vəziyyətini ağırlaşdıran qanun onun qüvvəyə minməsindən əvvəl törədilmiş əməllərə tətbiq edilmir.","category":"Cinayət hüququ","source":"Ümumi hüquq prinsipi","active":true,"sample":true,"createdAt":"2026-11-03T08:40:00.000Z"},
